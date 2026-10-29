@@ -7,6 +7,8 @@ A force builder for **Black Powder Red Earth**. It runs in any browser, needs no
 3. Build each deployment. The app tracks CP per pool, the one-per-100-CP limits, the Muhtasib-to-Shurta ratio, QRF discounts, and upgrades such as respirators and Forward Deployed.
 4. Choose a hand of three unique Intervention cards from any set. Unit Fires cards (Scoria RS, FengHuang-918, Quadrotor) are added automatically; in Phase Line you place one Phase Line Fires card at each line. Faction-emblem cards only appear for forces that include that faction.
 
+New to the game? **Starter forces** has two ready-made 150 CP forces for each faction. Open one in the builder and change anything you like.
+
 Two reference pages sit alongside the builder. **Quick reference** covers the turn sequence, each phase, attacking, line of sight, explosions and the expansion rules, with a search box for finding a rule at the table. **Factions** covers the war, the two blocs, the SPEAR/Aayari restriction, and each faction's background, allies and full unit list with CP costs.
 
 Forces save to your browser. You can copy a force as text for Discord or email, share a link or a short force code that loads it for someone else, export or import a file, or print a one-page force sheet. It follows your device's light or dark setting by default; the theme button switches to light, then dark, and remembers the choice.
@@ -23,7 +25,7 @@ To run it offline, download `dist/bpre-force-builder.html` and open it. It is th
 
 ## Put it on GitHub
 
-1. The repository is [justadude-g/bpre-roster](https://github.com/justadude-g/bpre-roster). For a fork or a fresh copy, create an empty public repository (no README, .gitignore or licence).
+1. The repository is [justadude-g/bpre-roster](https://github.com/justadude-g/bpre-roster). For a fork or a fresh copy, create an empty public repository (no README, .gitignore or license).
 2. Upload the contents of this folder. Either drag the files into the GitHub web page ("uploading an existing file"), or from a terminal:
    ```sh
    cd bpre-roster
@@ -45,6 +47,7 @@ To run it offline, download `dist/bpre-force-builder.html` and open it. It is th
 | `js/app.js` | App logic. Plain JavaScript, no build step |
 | `data/data.js` | **All game data**: game types, points presets, factions, units, cards |
 | `data/reference.js` | Quick reference rules and Faction reference text |
+| `data/starters.js` | Starter forces for new players |
 | `assets/factions/` | Faction emblems |
 | `tools/validate-data.mjs` | Checks the data file for mistakes |
 | `tools/build-single.mjs` | Rebuilds `dist/bpre-force-builder.html` |
@@ -69,6 +72,6 @@ Each card has a `text` field that the app shows when a player taps **Full effect
 
 A community tool for the Black Powder Red Earth Patreon, made with permission from Echelon Software. Black Powder Red Earth and all related names and marks belong to Echelon Software. Buy the game: [blackpowderredearth.com](https://blackpowderredearth.com/).
 
-## Licence
+## License
 
 Code is MIT licensed. See [LICENSE](LICENSE).

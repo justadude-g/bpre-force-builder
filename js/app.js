@@ -23,6 +23,7 @@
   function isObj(o) { return o && typeof o === 'object' && !Array.isArray(o); }
 
   var PL = D.pointsLabel || 'CP';
+  var ST = window.BPRE_STARTERS || [];
   var R = window.BPRE_REFERENCE || null;
   function emblem(fid, cls) {
     var f = FACTIONS[fid];
@@ -276,6 +277,7 @@
     cardTab: ['fires', 'special'].indexOf(savedUi.cardTab) !== -1 ? savedUi.cardTab : 'intervention',
     setFilter: Array.isArray(savedUi.setFilter) ? savedUi.setFilter.filter(function (id) { return SETS[id]; }) : [],
     unitSets: Array.isArray(savedUi.unitSets) ? savedUi.unitSets.filter(function (id) { return SETS[id]; }) : [],
+    starterFaction: 'all',
     undo: null,
     pendingDelete: null,
     openCards: {}
@@ -665,7 +667,7 @@
   }
 
   // ---------- views ----------
-  var VIEWS = ['build', 'reference', 'factions'];
+  var VIEWS = ['build', 'starters', 'reference', 'factions'];
   function setView(v, keepScroll) {
     if (VIEWS.indexOf(v) === -1) v = 'build';
     ui.view = v;
@@ -674,6 +676,7 @@
       $('#nav-' + id).setAttribute('aria-selected', String(id === v));
     });
     document.body.setAttribute('data-view', v);
+    if (v === 'starters') renderStarters();
     if (v === 'reference') renderReference();
     if (v === 'factions') renderFactionRef();
     try { history.replaceState(null, '', location.pathname + location.search + (v === 'build' ? '' : '#' + v)); } catch (e) { /* ignore */ }
@@ -715,6 +718,58 @@
     }).join('') + '</div>';
     if (q && !shown) html = '<div class="empty">No rules mention "' + esc(q) + '".</div>';
     box.innerHTML = html;
+  }
+
+
+  // ---------- starter forces ----------
+  function starterState(st) {
+    var cards = {};
+    (st.cards || []).forEach(function (id) { cards[id] = 1; });
+    return sanitize({ name: st.name, mode: st.mode, points: st.points, faction: st.faction, ally: st.ally, units: { main: st.units }, cards: cards });
+  }
+
+  function renderStarters() {
+    var box = $('#starter-body');
+    if (!box) return;
+    if (!ST.length) { box.innerHTML = '<div class="empty">No starter forces yet (data/starters.js).</div>'; return; }
+    var chips = '<div class="chips" role="group" aria-label="Filter by faction">' +
+      '<button type="button" class="chip" aria-pressed="' + (ui.starterFaction === 'all') + '" data-action="starter-faction" data-id="all">All</button>' +
+      D.factions.filter(function (f) { return ST.some(function (x) { return x.faction === f.id; }); }).map(function (f) {
+        return '<button type="button" class="chip chip-emblem" aria-pressed="' + (ui.starterFaction === f.id) + '" data-action="starter-faction" data-id="' + esc(f.id) + '">' + emblem(f.id, 'emblem-xs') + esc(f.name) + '</button>';
+      }).join('') + '</div>';
+
+    var cards = ST.filter(function (x) { return ui.starterFaction === 'all' || x.faction === ui.starterFaction; }).map(function (x) {
+      var f = FACTIONS[x.faction];
+      var a = x.ally ? FACTIONS[x.ally] : null;
+      var st = starterState(x);
+      var dep = deployments(st)[0];
+      var rows = depRows(st, dep);
+      var total = depTotal(st, dep);
+      var need = [];
+      rows.forEach(function (r) { if (need.indexOf(r.u.set) === -1) need.push(r.u.set); });
+      need.sort(function (p, q) { return D.sets.map(function (z) { return z.id; }).indexOf(p) - D.sets.map(function (z) { return z.id; }).indexOf(q); });
+      var fires = grantedFires(st);
+      return '<article class="starter" id="s-' + esc(x.id) + '">' +
+        '<header>' + emblem(x.faction, 'emblem-lg') + (a ? emblem(x.ally, 'emblem-lg') : '') +
+        '<div><span class="bloc-name">' + esc(f.name) + (a ? ' + ' + esc(a.name) : '') + '</span>' +
+        '<h2>' + esc(x.name) + '</h2></div></header>' +
+        '<div class="starter-tags"><span class="turn-chip on">' + esc(x.style || '') + '</span>' +
+        '<span class="turn-chip"><b class="mono">' + total + '</b> / ' + st.points + ' ' + PL + '</span>' +
+        '<span class="turn-chip"><b class="mono">' + modelCount(st) + '</b> models</span>' +
+        '<span class="turn-chip">Units from ' + need.map(function (id) { return esc(SETS[id].name); }).join(' + ') + '</span></div>' +
+        '<p class="starter-blurb">' + esc(x.blurb) + '</p>' +
+        '<div class="starter-cols"><div><h3>Units</h3><ul class="starter-list">' +
+        rows.map(function (r) { return '<li><span class="q">' + r.q + '×</span><span class="n">' + esc(r.u.name) + '</span><span class="p mono">' + r.cost + ' ' + PL + '</span></li>'; }).join('') +
+        '</ul></div><div><h3>Intervention hand</h3><ul class="starter-list">' +
+        pickedCards(st, 'intervention').map(function (r) { return '<li><span class="n">' + esc(r.c.name) + '</span><span class="p">' + esc(r.c.notes || '') + '</span></li>'; }).join('') +
+        '</ul>' + (fires.length ? '<h3>Fires (from units)</h3><ul class="starter-list">' + fires.map(function (g) { return '<li><span class="q">' + g.n + '×</span><span class="n">' + esc(g.c.name) + '</span></li>'; }).join('') + '</ul>' : '') +
+        '</div></div>' +
+        ((x.tips || []).length ? '<h3>Playing it</h3><ul class="starter-tips">' + x.tips.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>' : '') +
+        '<div class="starter-actions"><button type="button" class="btn primary" data-action="load-starter" data-id="' + esc(x.id) + '">Open in builder</button></div>' +
+        '</article>';
+    }).join('');
+
+    box.innerHTML = chips + '<div class="starter-grid">' + cards + '</div>';
   }
 
   function renderFactionRef() {
@@ -982,6 +1037,14 @@
       if (e) e.preventDefault();
       var t = document.getElementById('f-' + id);
       if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    },
+    'starter-faction': function (id) { ui.starterFaction = id; renderStarters(); },
+    'load-starter': function (id) {
+      var x = ST.filter(function (z) { return z.id === id; })[0];
+      if (!x) return;
+      ui.dep = 'main';
+      replaceState(starterState(x), 'Opened "' + x.name + '". Change anything you like.');
+      setView('build');
     },
     'build-with': function (id) {
       setView('build');

@@ -40,6 +40,7 @@
   <nav class="view-nav" aria-label="Sections">
     <div class="view-nav-inner" role="tablist">
       <button type="button" role="tab" class="view-tab" id="nav-build" data-action="set-view" data-id="build" aria-controls="view-build">Build</button>
+      <button type="button" role="tab" class="view-tab" id="nav-starters" data-action="set-view" data-id="starters" aria-controls="view-starters">Starter forces</button>
       <button type="button" role="tab" class="view-tab" id="nav-reference" data-action="set-view" data-id="reference" aria-controls="view-reference">Quick reference</button>
       <button type="button" role="tab" class="view-tab" id="nav-factions" data-action="set-view" data-id="factions" aria-controls="view-factions">Factions</button>
     </div>
@@ -156,6 +157,14 @@
   </aside>
 </main>
 
+<main class="view ref-view" id="view-starters" hidden>
+  <div class="ref-head">
+    <h1 class="ref-title">Starter forces</h1>
+    <p class="ref-sub">Ready-made 150 CP forces for new players, two per faction. Open one in the builder and change whatever you like. These are suggestions, not official lists.</p>
+  </div>
+  <div id="starter-body"></div>
+</main>
+
 <main class="view ref-view" id="view-reference" hidden>
   <div class="ref-head">
     <h1 class="ref-title">Quick reference</h1>
@@ -193,6 +202,7 @@
 
 <script src="data/data.js"></script>
 <script src="data/reference.js"></script>
+<script src="data/starters.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

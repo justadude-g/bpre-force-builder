@@ -85,3 +85,13 @@ Force-wide limits such as "every Muhtasib permits four Shurta": `{ id, label, me
 | `subtype` | Label shown on the card |
 | `notes` | Short summary shown on the card |
 | `text` | Full effect, shown when the player taps **Full effect** |
+
+## Starter forces (`data/starters.js`)
+
+Ready-made forces for new players, shown on the Starter forces page. Each is `{ id, name, faction, ally?, mode, points, style, blurb, tips, units, cards }`.
+
+- `units` is `{ unitId: quantity }` for the main kill team.
+- `cards` is a full hand of Intervention card ids.
+- The page works out the CP total, the models, which sets the units come from and the Fires cards the units bring.
+
+`node tools/validate-data.mjs` checks each force against the CP limit, the one-per-100 CP limits, the Muhtasib and Shurta ratio, allowed allies and faction cards. Keep them to what the unit and card text says. They are suggestions, not official lists.

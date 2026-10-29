@@ -653,3 +653,25 @@ mark { background: var(--accent-soft); color: var(--ink); border-radius: 2px; pa
   .unit-table td:first-child { white-space: normal; }
   .u-lim { display: block; font-weight: 400; font-size: 12px; color: var(--warn); font-family: var(--font-mono); margin-top: 2px; }
 }
+
+/* ---------- starter forces ---------- */
+#starter-body { display: grid; gap: 16px; }
+.starter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 16px; align-items: start; }
+.starter { display: grid; gap: 12px; padding: 18px; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); scroll-margin-top: 90px; }
+.starter header { display: flex; gap: 10px; align-items: center; }
+.starter header > div { display: grid; gap: 2px; min-width: 0; margin-left: 6px; }
+.starter h2 { margin: 0; font-family: var(--font-head); font-size: 24px; text-transform: uppercase; letter-spacing: .03em; line-height: 1.1; }
+.starter h3 { margin: 0 0 6px; font-family: var(--font-head); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.starter-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.starter-blurb { margin: 0; }
+.starter-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px 20px; }
+.starter-list { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 0; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.starter-list li { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: baseline; padding: 7px 10px; border-top: 1px solid var(--line); font-size: 14px; }
+.starter-list li:first-child { border-top: 0; }
+.starter-list .q { font-family: var(--font-mono, monospace); color: var(--muted); }
+.starter-list .p { color: var(--muted); font-size: 13px; text-align: right; }
+.starter-list li:not(:has(.q)) { grid-template-columns: 1fr; }
+.starter-list li:not(:has(.q)) .p { text-align: left; }
+.starter-tips { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 14px; }
+.starter-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+@media print { #view-starters { display: none !important; } }

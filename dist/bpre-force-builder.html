@@ -666,6 +666,28 @@ mark { background: var(--accent-soft); color: var(--ink); border-radius: 2px; pa
   .u-lim { display: block; font-weight: 400; font-size: 12px; color: var(--warn); font-family: var(--font-mono); margin-top: 2px; }
 }
 
+/* ---------- starter forces ---------- */
+#starter-body { display: grid; gap: 16px; }
+.starter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 16px; align-items: start; }
+.starter { display: grid; gap: 12px; padding: 18px; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); scroll-margin-top: 90px; }
+.starter header { display: flex; gap: 10px; align-items: center; }
+.starter header > div { display: grid; gap: 2px; min-width: 0; margin-left: 6px; }
+.starter h2 { margin: 0; font-family: var(--font-head); font-size: 24px; text-transform: uppercase; letter-spacing: .03em; line-height: 1.1; }
+.starter h3 { margin: 0 0 6px; font-family: var(--font-head); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.starter-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.starter-blurb { margin: 0; }
+.starter-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px 20px; }
+.starter-list { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 0; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.starter-list li { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: baseline; padding: 7px 10px; border-top: 1px solid var(--line); font-size: 14px; }
+.starter-list li:first-child { border-top: 0; }
+.starter-list .q { font-family: var(--font-mono, monospace); color: var(--muted); }
+.starter-list .p { color: var(--muted); font-size: 13px; text-align: right; }
+.starter-list li:not(:has(.q)) { grid-template-columns: 1fr; }
+.starter-list li:not(:has(.q)) .p { text-align: left; }
+.starter-tips { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 14px; }
+.starter-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+@media print { #view-starters { display: none !important; } }
+
 </style>
 <script>
   // Match the device by default. Apply the saved choice before first paint so the page doesn't flash.
@@ -697,6 +719,7 @@ mark { background: var(--accent-soft); color: var(--ink); border-radius: 2px; pa
   <nav class="view-nav" aria-label="Sections">
     <div class="view-nav-inner" role="tablist">
       <button type="button" role="tab" class="view-tab" id="nav-build" data-action="set-view" data-id="build" aria-controls="view-build">Build</button>
+      <button type="button" role="tab" class="view-tab" id="nav-starters" data-action="set-view" data-id="starters" aria-controls="view-starters">Starter forces</button>
       <button type="button" role="tab" class="view-tab" id="nav-reference" data-action="set-view" data-id="reference" aria-controls="view-reference">Quick reference</button>
       <button type="button" role="tab" class="view-tab" id="nav-factions" data-action="set-view" data-id="factions" aria-controls="view-factions">Factions</button>
     </div>
@@ -811,6 +834,14 @@ mark { background: var(--accent-soft); color: var(--ink); border-radius: 2px; pa
       </div>
     </div>
   </aside>
+</main>
+
+<main class="view ref-view" id="view-starters" hidden>
+  <div class="ref-head">
+    <h1 class="ref-title">Starter forces</h1>
+    <p class="ref-sub">Ready-made 150 CP forces for new players, two per faction. Open one in the builder and change whatever you like. These are suggestions, not official lists.</p>
+  </div>
+  <div id="starter-body"></div>
 </main>
 
 <main class="view ref-view" id="view-reference" hidden>
@@ -1156,7 +1187,7 @@ window.BPRE_REFERENCE = {
         { term: "+1 to every die", text: "Any attack made during this phase gets +1 per die, including attacks granted by Intervention cards." },
         { term: "Grenades", text: "Throw up to 10\" at a point in line of sight. The grenade sits as a Frag chit and detonates in the Finishing Phase." },
         { term: "Other actions", text: "Setting explosives and most mission-specific actions happen here, even for units with no line of sight. Takes the entire turn and gains an ACT chit." },
-        { term: "QRF", text: "From turn 3 on, the defender rolls off for Quick Reaction Force activation at the start of the phase. No QRF on the last turn. Use only 1 die for turns 6 and 7." }
+        { term: "QRF", text: "From turn 3 on, the defender rolls off for Quick Reaction Force activation at the start of the phase. Use only 1 die for turns 5 and 6. No QRF on turn 7." }
       ]
     },
     {
@@ -1256,6 +1287,171 @@ window.BPRE_REFERENCE = {
 
 </script>
 <script>
+/*
+ * Starter forces: ready-made forces for new players.
+ *
+ * Each one is a complete, legal force at a standard Core Set tasking (150 CP).
+ * Open one in the builder to change anything. These are suggestions built from
+ * the unit and card text, not official lists.
+ *
+ *   id, name     identifier (lowercase, hyphens) and display name
+ *   faction      main faction id
+ *   ally         optional ally faction id
+ *   mode         game type id
+ *   points       CP limit
+ *   style        short label shown as a tag, such as "Balanced"
+ *   blurb        one or two sentences on what the force does
+ *   tips         short play tips
+ *   units        { unitId: quantity } for the main kill team
+ *   cards        Intervention card ids (a full hand)
+ *
+ * Run `node tools/validate-data.mjs` after editing. It checks every force
+ * against the same limits the builder enforces.
+ */
+window.BPRE_STARTERS = [
+  // ---- Crisis Troop Scorch ----
+  {
+    id: "cts-balanced",
+    name: "Scorch Fire Team",
+    faction: "cts", mode: "core", points: 150,
+    style: "Balanced",
+    blurb: "One of each core role: an Advisor to call in a Scoria RS, a machine gunner to hold a lane, a fast Recce and an Assaulter with frags.",
+    tips: [
+      "Keep the Advisor back and use Glint to drop the Scoria RS on a point you can see.",
+      "Park the Automatic Rifleman where it covers a door or corridor and let the others work around it."
+    ],
+    units: { "cts-advisor": 1, "cts-auto-rifleman": 1, "cts-recce": 1, "cts-assaulter": 1 },
+    cards: ["int-react-to-contact", "int-kill-not-capture", "int-break-contact"]
+  },
+  {
+    id: "cts-door-kickers",
+    name: "Door Kickers",
+    faction: "cts", mode: "core", points: 150,
+    style: "Aggressive",
+    blurb: "Six cheap, fast models. Three Recces with Doorkicker and three Assaulters with frags. Nothing here has a per-100 CP limit, so it is simple to field.",
+    tips: [
+      "Move together and push through doors early. The Door Is Yours makes that free.",
+      "Assaulters throw frags from the Direct Fire Phase to clear a room before you walk in."
+    ],
+    units: { "cts-recce": 3, "cts-assaulter": 3 },
+    cards: ["int-door-is-yours", "int-frag-out", "int-pile-little-arms"]
+  },
+
+  // ---- 00 Unit Nitto ----
+  {
+    id: "nitto-drone-eyes",
+    name: "Drone Eyes",
+    faction: "nitto", mode: "core", points: 150,
+    style: "Support",
+    blurb: "A Systems Operator brings two Quadrotor Fires cards, backed by two Riflemen and a Pointman.",
+    tips: [
+      "Keep the Systems Operator behind your Riflemen and use the Quadrotors on groups, not single models.",
+      "Nitto units are fast (8\"), so use that to get the first shot."
+    ],
+    units: { "nitto-sysop": 1, "nitto-rifleman": 2, "nitto-pointman": 1 },
+    cards: ["int-kill-not-capture", "int-hasty-ambush", "int-lift-and-shift"]
+  },
+  {
+    id: "nitto-joint-strike",
+    name: "Joint Strike with Scorch",
+    faction: "nitto", ally: "cts", mode: "core", points: 150,
+    style: "Allied",
+    blurb: "Nitto's Systems Operator and Pointman alongside a CTS Automatic Rifleman and Recce. A simple way to see how an allied force works.",
+    tips: [
+      "The Automatic Rifleman anchors a lane while the fast Nitto and Recce models flank.",
+      "Use the Quadrotors to open up positions before the Pointman breaches."
+    ],
+    units: { "nitto-sysop": 1, "nitto-pointman": 1, "cts-auto-rifleman": 1, "cts-recce": 1 },
+    cards: ["int-fire-for-effect", "int-kill-not-capture", "int-break-contact"]
+  },
+
+  // ---- Hongbin ----
+  {
+    id: "hongbin-merc-line",
+    name: "Mercenary Line",
+    faction: "hongbin", mode: "core", points: 150,
+    style: "Balanced",
+    blurb: "An Enabler with two FengHuang-918 Fires cards behind five cheap Mercs. Lots of models and lots of frags.",
+    tips: [
+      "Mercs are cheap, so trade them freely and keep the Enabler alive to call in the FengHuang.",
+      "Spread out. Frags and explosions punish a tight group."
+    ],
+    units: { "hb-enabler": 1, "hb-merc": 5 },
+    cards: ["int-hasty-ambush", "int-break-contact", "int-frag-out"]
+  },
+  {
+    id: "hongbin-proxy-screen",
+    name: "Proxy Screen",
+    faction: "hongbin", ally: "aayari", mode: "core", points: 150,
+    style: "Allied",
+    blurb: "Hongbin's Enabler and Mercs shoot from behind Aayari bodies: two Muhtasib with four Shurta in front.",
+    tips: [
+      "Send the Shurta and Muhtasib first and keep the Mercs and Enabler behind them.",
+      "Each Muhtasib permits four Shurta, so this force is at its limit. You cannot add more Shurta without another Muhtasib."
+    ],
+    units: { "hb-enabler": 1, "hb-merc": 3, "aa-muhtasib": 2, "aa-shurta": 4 },
+    cards: ["int-ambush", "int-hasty-ambush", "int-break-contact"]
+  },
+
+  // ---- Aayari Network ----
+  {
+    id: "aayari-human-wave",
+    name: "Human Wave",
+    faction: "aayari", mode: "core", points: 150,
+    style: "Swarm",
+    blurb: "Six Muhtasib with S-Vests and twelve Shurta. Cheap, numerous and built to overwhelm.",
+    tips: [
+      "Lead with Shurta to soak up shots and get the Muhtasib close enough to detonate.",
+      "Shurta have no save roll, so expect to lose them. That is the plan."
+    ],
+    units: { "aa-muhtasib": 6, "aa-shurta": 12 },
+    cards: ["int-ambush", "int-front-towards-enemy", "int-hasty-ambush"]
+  },
+  {
+    id: "aayari-gun-line",
+    name: "Gun Line",
+    faction: "aayari", mode: "core", points: 150,
+    style: "Balanced",
+    blurb: "A Shurta PKM Gunner and assistant give you a base of fire while four Muhtasib and eight Shurta close in.",
+    tips: [
+      "Set the PKM up first where it can cover the approach, then advance the rest.",
+      "The PKM Gunner can take two ACT tokens a turn from Direct Fire or Immediate Actions."
+    ],
+    units: { "aa-shurta-pkm": 1, "aa-assistant-pkm": 1, "aa-muhtasib": 4, "aa-shurta": 8 },
+    cards: ["int-ambush", "int-front-towards-enemy", "int-kill-not-capture"]
+  },
+
+  // ---- SPEAR Brigade ----
+  {
+    id: "spear-ew-patrol",
+    name: "Electronic Warfare Patrol",
+    faction: "spear", mode: "core", points: 150,
+    style: "Support",
+    blurb: "A Systems Operator with two Quadrotors, two Marksmen and an Assaulter.",
+    tips: [
+      "Marksmen cover from a distance while the Assaulter breaches and the Operator controls the Quadrotors.",
+      "The Operator carries Cognitive Jammers, which help against enemy drones."
+    ],
+    units: { "spear-sysop": 1, "spear-marksman": 2, "spear-assaulter": 1 },
+    cards: ["int-kill-not-capture", "int-break-contact", "int-lift-and-shift"]
+  },
+  {
+    id: "spear-hongbin-gun-team",
+    name: "SPEAR and Hongbin Gun Team",
+    faction: "spear", ally: "hongbin", mode: "core", points: 150,
+    style: "Allied",
+    blurb: "Only three models: a SPEAR Systems Operator and Marksman, with a Hongbin PKM Gunner for sustained fire. Easy to run first time.",
+    tips: [
+      "Set the PKM Gunner up first and let the Marksman cover it.",
+      "With so few models, protect them. Use Break Contact when a save matters."
+    ],
+    units: { "spear-sysop": 1, "spear-marksman": 1, "hb-pkm-gunner": 1 },
+    cards: ["int-break-contact", "int-hasty-ambush", "int-full-send"]
+  }
+];
+
+</script>
+<script>
 /* BPRE Force Builder. Plain JavaScript, no build step. Game data lives in data/data.js. */
 (function () {
   'use strict';
@@ -1281,6 +1477,7 @@ window.BPRE_REFERENCE = {
   function isObj(o) { return o && typeof o === 'object' && !Array.isArray(o); }
 
   var PL = D.pointsLabel || 'CP';
+  var ST = window.BPRE_STARTERS || [];
   var R = window.BPRE_REFERENCE || null;
   function emblem(fid, cls) {
     var f = FACTIONS[fid];
@@ -1534,6 +1731,7 @@ window.BPRE_REFERENCE = {
     cardTab: ['fires', 'special'].indexOf(savedUi.cardTab) !== -1 ? savedUi.cardTab : 'intervention',
     setFilter: Array.isArray(savedUi.setFilter) ? savedUi.setFilter.filter(function (id) { return SETS[id]; }) : [],
     unitSets: Array.isArray(savedUi.unitSets) ? savedUi.unitSets.filter(function (id) { return SETS[id]; }) : [],
+    starterFaction: 'all',
     undo: null,
     pendingDelete: null,
     openCards: {}
@@ -1923,7 +2121,7 @@ window.BPRE_REFERENCE = {
   }
 
   // ---------- views ----------
-  var VIEWS = ['build', 'reference', 'factions'];
+  var VIEWS = ['build', 'starters', 'reference', 'factions'];
   function setView(v, keepScroll) {
     if (VIEWS.indexOf(v) === -1) v = 'build';
     ui.view = v;
@@ -1932,6 +2130,7 @@ window.BPRE_REFERENCE = {
       $('#nav-' + id).setAttribute('aria-selected', String(id === v));
     });
     document.body.setAttribute('data-view', v);
+    if (v === 'starters') renderStarters();
     if (v === 'reference') renderReference();
     if (v === 'factions') renderFactionRef();
     try { history.replaceState(null, '', location.pathname + location.search + (v === 'build' ? '' : '#' + v)); } catch (e) { /* ignore */ }
@@ -1973,6 +2172,58 @@ window.BPRE_REFERENCE = {
     }).join('') + '</div>';
     if (q && !shown) html = '<div class="empty">No rules mention "' + esc(q) + '".</div>';
     box.innerHTML = html;
+  }
+
+
+  // ---------- starter forces ----------
+  function starterState(st) {
+    var cards = {};
+    (st.cards || []).forEach(function (id) { cards[id] = 1; });
+    return sanitize({ name: st.name, mode: st.mode, points: st.points, faction: st.faction, ally: st.ally, units: { main: st.units }, cards: cards });
+  }
+
+  function renderStarters() {
+    var box = $('#starter-body');
+    if (!box) return;
+    if (!ST.length) { box.innerHTML = '<div class="empty">No starter forces yet (data/starters.js).</div>'; return; }
+    var chips = '<div class="chips" role="group" aria-label="Filter by faction">' +
+      '<button type="button" class="chip" aria-pressed="' + (ui.starterFaction === 'all') + '" data-action="starter-faction" data-id="all">All</button>' +
+      D.factions.filter(function (f) { return ST.some(function (x) { return x.faction === f.id; }); }).map(function (f) {
+        return '<button type="button" class="chip chip-emblem" aria-pressed="' + (ui.starterFaction === f.id) + '" data-action="starter-faction" data-id="' + esc(f.id) + '">' + emblem(f.id, 'emblem-xs') + esc(f.name) + '</button>';
+      }).join('') + '</div>';
+
+    var cards = ST.filter(function (x) { return ui.starterFaction === 'all' || x.faction === ui.starterFaction; }).map(function (x) {
+      var f = FACTIONS[x.faction];
+      var a = x.ally ? FACTIONS[x.ally] : null;
+      var st = starterState(x);
+      var dep = deployments(st)[0];
+      var rows = depRows(st, dep);
+      var total = depTotal(st, dep);
+      var need = [];
+      rows.forEach(function (r) { if (need.indexOf(r.u.set) === -1) need.push(r.u.set); });
+      need.sort(function (p, q) { return D.sets.map(function (z) { return z.id; }).indexOf(p) - D.sets.map(function (z) { return z.id; }).indexOf(q); });
+      var fires = grantedFires(st);
+      return '<article class="starter" id="s-' + esc(x.id) + '">' +
+        '<header>' + emblem(x.faction, 'emblem-lg') + (a ? emblem(x.ally, 'emblem-lg') : '') +
+        '<div><span class="bloc-name">' + esc(f.name) + (a ? ' + ' + esc(a.name) : '') + '</span>' +
+        '<h2>' + esc(x.name) + '</h2></div></header>' +
+        '<div class="starter-tags"><span class="turn-chip on">' + esc(x.style || '') + '</span>' +
+        '<span class="turn-chip"><b class="mono">' + total + '</b> / ' + st.points + ' ' + PL + '</span>' +
+        '<span class="turn-chip"><b class="mono">' + modelCount(st) + '</b> models</span>' +
+        '<span class="turn-chip">Units from ' + need.map(function (id) { return esc(SETS[id].name); }).join(' + ') + '</span></div>' +
+        '<p class="starter-blurb">' + esc(x.blurb) + '</p>' +
+        '<div class="starter-cols"><div><h3>Units</h3><ul class="starter-list">' +
+        rows.map(function (r) { return '<li><span class="q">' + r.q + '×</span><span class="n">' + esc(r.u.name) + '</span><span class="p mono">' + r.cost + ' ' + PL + '</span></li>'; }).join('') +
+        '</ul></div><div><h3>Intervention hand</h3><ul class="starter-list">' +
+        pickedCards(st, 'intervention').map(function (r) { return '<li><span class="n">' + esc(r.c.name) + '</span><span class="p">' + esc(r.c.notes || '') + '</span></li>'; }).join('') +
+        '</ul>' + (fires.length ? '<h3>Fires (from units)</h3><ul class="starter-list">' + fires.map(function (g) { return '<li><span class="q">' + g.n + '×</span><span class="n">' + esc(g.c.name) + '</span></li>'; }).join('') + '</ul>' : '') +
+        '</div></div>' +
+        ((x.tips || []).length ? '<h3>Playing it</h3><ul class="starter-tips">' + x.tips.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>' : '') +
+        '<div class="starter-actions"><button type="button" class="btn primary" data-action="load-starter" data-id="' + esc(x.id) + '">Open in builder</button></div>' +
+        '</article>';
+    }).join('');
+
+    box.innerHTML = chips + '<div class="starter-grid">' + cards + '</div>';
   }
 
   function renderFactionRef() {
@@ -2240,6 +2491,14 @@ window.BPRE_REFERENCE = {
       if (e) e.preventDefault();
       var t = document.getElementById('f-' + id);
       if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    },
+    'starter-faction': function (id) { ui.starterFaction = id; renderStarters(); },
+    'load-starter': function (id) {
+      var x = ST.filter(function (z) { return z.id === id; })[0];
+      if (!x) return;
+      ui.dep = 'main';
+      replaceState(starterState(x), 'Opened "' + x.name + '". Change anything you like.');
+      setView('build');
     },
     'build-with': function (id) {
       setView('build');

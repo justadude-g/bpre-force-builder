@@ -13,6 +13,7 @@ const guard = (s) => s.replace(/<\/script/gi, '<\\/script');
 html = html.replace('<link rel="stylesheet" href="css/style.css">', () => `<style>\n${read('css/style.css')}\n</style>`);
 html = html.replace('<script src="data/data.js"></script>', () => `<script>\n${guard(read('data/data.js'))}\n</script>`);
 html = html.replace('<script src="data/reference.js"></script>', () => `<script>\n${guard(read('data/reference.js'))}\n</script>`);
+html = html.replace('<script src="data/starters.js"></script>', () => `<script>\n${guard(read('data/starters.js'))}\n</script>`);
 html = html.replace('<script src="js/app.js"></script>', () => `<script>\n${guard(read('js/app.js'))}\n</script>`);
 // Inline images so the single file works offline.
 html = html.replace(/assets\/[\w\-\/]+\.(jpg|jpeg|png|webp)/g, (p, ext) => {

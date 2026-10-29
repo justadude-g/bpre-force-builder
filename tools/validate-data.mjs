@@ -118,6 +118,71 @@ for (const c of D.cards || []) {
   if (c.type !== 'special' && !c.text) warn(`card "${c.id}": no "text" for the Full effect panel`);
 }
 
+
+// ---- Starter forces ----
+{
+  const sp = join(root, 'data', 'starters.js');
+  if (existsSync(sp)) {
+    const sb = { window: {} };
+    vm.runInNewContext(readFileSync(sp, 'utf8'), sb, { filename: 'data/starters.js' });
+    const S = sb.window.BPRE_STARTERS || [];
+    const unitById = new Map(D.units.map((u) => [u.id, u]));
+    const cardById = new Map(D.cards.map((c) => [c.id, c]));
+    const seen = new Set();
+    for (const x of S) {
+      const tag = `starter "${x.id}"`;
+      if (!/^[a-z0-9-]+$/.test(x.id || '')) err(`${tag}: bad id`);
+      if (seen.has(x.id)) err(`${tag}: duplicate id`);
+      seen.add(x.id);
+      const mode = (D.modes || []).find((m) => m.id === x.mode);
+      const fac = (D.factions || []).find((f) => f.id === x.faction);
+      if (!mode) { err(`${tag}: unknown mode "${x.mode}"`); continue; }
+      if (!fac) { err(`${tag}: unknown faction "${x.faction}"`); continue; }
+      if (x.ally) {
+        if (!(fac.allies || []).includes(x.ally)) err(`${tag}: ${x.ally} is not an ally of ${x.faction}`);
+        if ((D.incompatible || []).some((p) => p.includes(x.faction) && p.includes(x.ally))) err(`${tag}: ${x.faction} and ${x.ally} can never be fielded together`);
+      }
+      if (!x.name || !x.blurb) err(`${tag}: needs a name and a blurb`);
+      if (!(mode.presets || []).some((p) => p.points === x.points)) warn(`${tag}: ${x.points} CP is not a preset for ${mode.name}`);
+      const allowed = [x.faction, x.ally].filter(Boolean);
+      let total = 0;
+      let used = {};
+      for (const [id, q] of Object.entries(x.units || {})) {
+        const u = unitById.get(id);
+        if (!u) { err(`${tag}: unknown unit "${id}"`); continue; }
+        if (!allowed.includes(u.faction)) err(`${tag}: ${u.name} (${u.faction}) is not in this force`);
+        if (!isInt(q, 1)) err(`${tag}: bad quantity for ${id}`);
+        total += (u.cost || 0) * q;
+        used[id] = q;
+      }
+      if (total > x.points) err(`${tag}: ${total} CP is over the ${x.points} CP limit`);
+      if (total < x.points - 20) warn(`${tag}: only ${total} of ${x.points} CP used`);
+      for (const [id, q] of Object.entries(used)) {
+        const u = unitById.get(id);
+        if (u.perPoints && q > Math.floor(total / u.perPoints)) err(`${tag}: ${u.name} is limited to one per ${u.perPoints} CP`);
+      }
+      for (const r of D.ratios || []) {
+        const have = r.members.reduce((n, id) => n + (used[id] || 0), 0);
+        const base = r.per.reduce((n, id) => n + (used[id] || 0), 0);
+        if (have > base * r.max) err(`${tag}: breaks "${r.label}" (${have} against room for ${base * r.max})`);
+      }
+      const hand = x.cards || [];
+      if (typeof mode.interventionLimit === 'number' && hand.length !== mode.interventionLimit) err(`${tag}: needs ${mode.interventionLimit} Intervention cards, has ${hand.length}`);
+      if (new Set(hand).size !== hand.length) err(`${tag}: repeats a card`);
+      for (const id of hand) {
+        const c = cardById.get(id);
+        if (!c) { err(`${tag}: unknown card "${id}"`); continue; }
+        if (c.type !== 'intervention') err(`${tag}: "${id}" is not an Intervention card`);
+        if (c.factions && c.factions.length && !c.factions.some((f) => allowed.includes(f))) err(`${tag}: "${id}" needs ${c.factions.join(' or ')} in the force`);
+      }
+    }
+    const perFaction = {};
+    for (const x of S) perFaction[x.faction] = (perFaction[x.faction] || 0) + 1;
+    for (const f of D.factions || []) if (!perFaction[f.id]) warn(`no starter force for ${f.name}`);
+    console.log(`${S.length} starter forces checked.`);
+  }
+}
+
 for (const w of warnings) console.log('warn  ' + w);
 for (const e of errors) console.log('ERROR ' + e);
 const byType = (t) => (D.cards || []).filter((c) => c.type === t).length;
