@@ -49,6 +49,7 @@ To run it offline, download `dist/bpre-force-builder.html` and open it. It is th
 | `data/reference.js` | Quick reference rules and Faction reference text |
 | `data/starters.js` | Starter forces for new players |
 | `assets/factions/` | Faction emblems |
+| `assets/icons/` | Site icon (SVG source plus PNG sizes) |
 | `tools/validate-data.mjs` | Checks the data file for mistakes |
 | `tools/build-single.mjs` | Rebuilds `dist/bpre-force-builder.html` |
 | `dist/bpre-force-builder.html` | Single-file offline copy |
