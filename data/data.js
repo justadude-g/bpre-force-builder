@@ -13,7 +13,7 @@
  * rules text from the books or cards into this file.
  */
 window.BPRE_DATA = {
-  version: "0.8.0",
+  version: "2026-10-29",
   pointsLabel: "CP",
   // Set this to your GitHub repo URL so the app can link to issues.
   repoUrl: "https://github.com/justadude-g/bpre-roster",
@@ -114,7 +114,7 @@ window.BPRE_DATA = {
       id: "nitto", name: "00 Unit Nitto", subtitle: "Awbari Border Protection", bloc: "Cold Harbor bloc", allies: ["cts"],
       emblem: "assets/factions/nitto.png",
       tagline: "State strike unit, indiscriminate and extrajudicial",
-      lore: "A national strike unit answering to the Awbari National Directorate of Intelligence, built to pursue and interdict extremists crossing from Qasra. It opened its account in 2025 at the Awbari holding centre, where rather than retake a compound full of dead hostages the team leader dropped it with thermobaric UAS."
+      lore: "A national strike unit answering to the Awbari National Directorate of Intelligence, built to pursue and interdict extremists crossing from Qasra. It opened its account in 2025 at the Awbari holding centre, where rather than retake a compound full of dead hostages the team leader simply dropped it with thermobaric UAS."
     },
     {
       id: "hongbin", name: "Hongbin", subtitle: "Kinetic Forces / Alloy Security", bloc: "Hongbin bloc", allies: ["aayari", "spear"],
@@ -123,7 +123,7 @@ window.BPRE_DATA = {
       lore: "Officially protection officers guarding company sites and assets. In practice a battalion of PLAN marine veterans and North Korean special operations personnel, leased to Chinese foreign intelligence, running a ground force of Syrian mercenaries. Calculating, profitable, and content to spend proxy lives to protect its own."
     },
     {
-      id: "aayari", name: "Aayari Network", subtitle: "The Aayar Guard", bloc: "Hongbin bloc", allies: ["hongbin"],
+      id: "aayari", name: "Aayari Network", subtitle: "The Aayari Guard", bloc: "Hongbin bloc", allies: ["hongbin"],
       emblem: "assets/factions/aayari.png",
       tagline: "Jihadist network fighting as Hongbin's proxy",
       lore: "Drawn from the secret police and republican guards of the pre-Arab Spring order, the Network supplies Hongbin with bodies. Muhtasib sappers storm positions and detonate their vests on the survivors; Shurta screen the advance and are spent freely. Hongbin sends them into close combat with Scorch teams and shoots from cover behind them."
