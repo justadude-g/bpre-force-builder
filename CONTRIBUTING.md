@@ -95,3 +95,14 @@ Ready-made forces for new players, shown on the Starter forces page. Each is `{ 
 - The page works out the CP total, the models, which sets the units come from and the Fires cards the units bring.
 
 `node tools/validate-data.mjs` checks each force against the CP limit, the one-per-100 CP limits, the Muhtasib and Shurta ratio, allowed allies and faction cards. Keep them to what the unit and card text says. They are suggestions, not official lists.
+
+## Rules index (`data/rules-index.js`)
+
+A searchable list of keywords with the book and page to read. It points to the rule and does not reproduce it, so keep notes short and in your own words.
+
+- `books` is `{ id, name, short, coverage }`. `short` is the label on the page chip. `coverage` lists the pages indexed.
+- Each entry is `{ term, aliases?, note?, refs }`. Search looks at the term, aliases and note, so add the words people actually type.
+- `refs` is `[{ book, pages }]`. `pages` is text: `"36"`, `"30-31"` or `"27, 33"`. Use the page number printed on the page, not the PDF position.
+- When a keyword appears in all three books, list all three.
+
+`node tools/validate-data.mjs` checks for duplicate terms, unknown books and malformed page numbers. It cannot check the page numbers themselves, so check any new entry against the book.

@@ -25,6 +25,7 @@
   var PL = D.pointsLabel || 'CP';
   var ST = window.BPRE_STARTERS || [];
   var R = window.BPRE_REFERENCE || null;
+  var RI = window.BPRE_RULES_INDEX || null;
   function emblem(fid, cls) {
     var f = FACTIONS[fid];
     if (!f || !f.emblem) return '';
@@ -278,6 +279,7 @@
     setFilter: Array.isArray(savedUi.setFilter) ? savedUi.setFilter.filter(function (id) { return SETS[id]; }) : [],
     unitSets: Array.isArray(savedUi.unitSets) ? savedUi.unitSets.filter(function (id) { return SETS[id]; }) : [],
     starterFaction: 'all',
+    ruleBook: 'all',
     undo: null,
     pendingDelete: null,
     openCards: {}
@@ -667,7 +669,7 @@
   }
 
   // ---------- views ----------
-  var VIEWS = ['build', 'starters', 'reference', 'factions'];
+  var VIEWS = ['build', 'starters', 'reference', 'rules', 'factions'];
   function setView(v, keepScroll) {
     if (VIEWS.indexOf(v) === -1) v = 'build';
     ui.view = v;
@@ -678,6 +680,7 @@
     document.body.setAttribute('data-view', v);
     if (v === 'starters') renderStarters();
     if (v === 'reference') renderReference();
+    if (v === 'rules') renderRulesIndex();
     if (v === 'factions') renderFactionRef();
     try { history.replaceState(null, '', location.pathname + location.search + (v === 'build' ? '' : '#' + v)); } catch (e) { /* ignore */ }
     if (!keepScroll) window.scrollTo(0, 0);
@@ -770,6 +773,71 @@
     }).join('');
 
     box.innerHTML = chips + '<div class="starter-grid">' + cards + '</div>';
+  }
+
+
+  // ---------- rules index ----------
+  function normKey(t) { return String(t || '').toLowerCase().replace(/[^a-z0-9+ ]+/g, ' ').replace(/\s+/g, ' ').trim(); }
+
+  function renderRulesIndex() {
+    var box = $('#rules-body');
+    if (!box) return;
+    if (!RI || !RI.entries || !RI.entries.length) { box.innerHTML = '<div class="empty">Rules index data is missing (data/rules-index.js).</div>'; return; }
+    var q = normKey($('#rules-search').value);
+    var words = q ? q.split(' ') : [];
+    var books = {};
+    RI.books.forEach(function (b) { books[b.id] = b; });
+
+    $('#rules-books').innerHTML = [{ id: 'all', short: 'All books' }].concat(RI.books).map(function (b) {
+      return '<button type="button" class="chip" aria-pressed="' + (ui.ruleBook === b.id) + '" data-action="rules-book" data-id="' + esc(b.id) + '">' + esc(b.id === 'all' ? b.short : b.name) + '</button>';
+    }).join('');
+
+    var rows = RI.entries.map(function (e) {
+      var refs = e.refs.filter(function (r) { return ui.ruleBook === 'all' || r.book === ui.ruleBook; });
+      if (!refs.length) return null;
+      var hay = normKey([e.term].concat(e.aliases || [], [e.note || '']).join(' '));
+      var head = normKey([e.term].concat(e.aliases || []).join(' '));
+      var ok = words.every(function (w) { return hay.indexOf(w) !== -1; });
+      if (!ok) return null;
+      var score = 0;
+      if (words.length) {
+        var t = normKey(e.term);
+        score = t === q ? 0 : t.indexOf(q) === 0 ? 1 : head.indexOf(q) !== -1 ? 2 : words.every(function (w) { return head.indexOf(w) !== -1; }) ? 3 : 4;
+      }
+      return { e: e, refs: refs, score: score };
+    }).filter(Boolean);
+
+    rows.sort(function (a, b) { return a.score - b.score || a.e.term.localeCompare(b.e.term); });
+
+    $('#rules-count').textContent = rows.length + ' of ' + RI.entries.length + ' keywords';
+
+    if (!rows.length) { box.innerHTML = '<div class="empty">No keyword matches "' + esc($('#rules-search').value.trim()) + '". Try a shorter word.</div>'; return; }
+
+    function rowHtml(r) {
+      var e = r.e;
+      return '<li class="ri-row"><div class="ri-main"><span class="ri-term">' + highlight(e.term, q) + '</span>' +
+        (e.aliases && e.aliases.length ? '<span class="ri-alias">also: ' + esc(e.aliases.join(', ')) + '</span>' : '') +
+        (e.note ? '<span class="ri-note">' + highlight(e.note, q) + '</span>' : '') + '</div>' +
+        '<div class="ri-refs">' + r.refs.map(function (x) {
+          var b = books[x.book];
+          return '<span class="ri-ref ri-' + esc(x.book) + '" title="' + esc(b ? b.name : x.book) + '"><b>' + esc(b ? b.short : x.book) + '</b> p.\u00a0' + esc(x.pages) + '</span>';
+        }).join('') + '</div></li>';
+    }
+
+    var html = '';
+    if (words.length) {
+      html = '<ul class="ri-list">' + rows.map(rowHtml).join('') + '</ul>';
+    } else {
+      var letter = '';
+      rows.forEach(function (r) {
+        var L = r.e.term.charAt(0).toUpperCase();
+        if (L !== letter) { if (letter) html += '</ul>'; letter = L; html += '<h2 class="ri-letter" id="ri-' + esc(L) + '">' + esc(L) + '</h2><ul class="ri-list">'; }
+        html += rowHtml(r);
+      });
+      html += '</ul>';
+    }
+    html += '<p class="ri-coverage">Indexed pages: ' + RI.books.filter(function (b) { return b.coverage; }).map(function (b) { return esc(b.short) + ' ' + esc(b.coverage.replace(/^Pages /, '')); }).join('. ') + '.</p>';
+    box.innerHTML = html;
   }
 
   function renderFactionRef() {
@@ -1038,6 +1106,7 @@
       var t = document.getElementById('f-' + id);
       if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
     },
+    'rules-book': function (id) { ui.ruleBook = id; renderRulesIndex(); },
     'starter-faction': function (id) { ui.starterFaction = id; renderStarters(); },
     'load-starter': function (id) {
       var x = ST.filter(function (z) { return z.id === id; })[0];
@@ -1254,6 +1323,7 @@
 
   applyTheme(currentTheme());
   $('#ref-search').addEventListener('input', renderReference);
+  $('#rules-search').addEventListener('input', renderRulesIndex);
   var startView = (location.hash || '').replace('#', '');
   setView(VIEWS.indexOf(startView) !== -1 ? startView : 'build', true);
   window.addEventListener('hashchange', function () {

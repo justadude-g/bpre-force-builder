@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Saira+Stencil+One&display=swap">
-<link rel="stylesheet" href="css/style.css?v=86ec50e5">
+<link rel="stylesheet" href="css/style.css?v=2a880c93">
 <script>
   // Match the device by default. Apply the saved choice before first paint so the page doesn't flash.
   (function () {
@@ -47,6 +47,7 @@
       <button type="button" role="tab" class="view-tab" id="nav-build" data-action="set-view" data-id="build" aria-controls="view-build">Build</button>
       <button type="button" role="tab" class="view-tab" id="nav-starters" data-action="set-view" data-id="starters" aria-controls="view-starters">Starter forces</button>
       <button type="button" role="tab" class="view-tab" id="nav-reference" data-action="set-view" data-id="reference" aria-controls="view-reference">Quick reference</button>
+      <button type="button" role="tab" class="view-tab" id="nav-rules" data-action="set-view" data-id="rules" aria-controls="view-rules">Rules index</button>
       <button type="button" role="tab" class="view-tab" id="nav-factions" data-action="set-view" data-id="factions" aria-controls="view-factions">Factions</button>
     </div>
   </nav>
@@ -182,6 +183,20 @@
   <div id="ref-body"></div>
 </main>
 
+<main class="view ref-view" id="view-rules" hidden>
+  <div class="ref-head">
+    <h1 class="ref-title">Rules index</h1>
+    <p class="ref-sub">Find a keyword, then read the rule in the book. Page numbers are the printed numbers in each book.</p>
+    <label class="ref-search" for="rules-search">
+      <span class="sr-only">Search keywords</span>
+      <input id="rules-search" type="search" placeholder="Search a keyword: stagger, Glint, doorkicker..." autocomplete="off">
+    </label>
+    <div class="chips" id="rules-books" role="group" aria-label="Filter by book"></div>
+    <p class="ref-sub" id="rules-count" aria-live="polite"></p>
+  </div>
+  <div id="rules-body"></div>
+</main>
+
 <main class="view ref-view" id="view-factions" hidden>
   <div class="ref-head">
     <h1 class="ref-title">Faction reference</h1>
@@ -208,6 +223,7 @@
 <script src="data/data.js?v=125b3ac8"></script>
 <script src="data/reference.js?v=9b0a7a2f"></script>
 <script src="data/starters.js?v=683134ad"></script>
-<script src="js/app.js?v=6cdb8739"></script>
+<script src="data/rules-index.js?v=09267ebf"></script>
+<script src="js/app.js?v=3bb2fbf8"></script>
 </body>
 </html>

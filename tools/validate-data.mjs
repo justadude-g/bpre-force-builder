@@ -183,6 +183,37 @@ for (const c of D.cards || []) {
   }
 }
 
+// ---- rules index ----
+{
+  const rp = join(root, 'data', 'rules-index.js');
+  if (existsSync(rp)) {
+    const sb = { window: {} };
+    vm.runInNewContext(readFileSync(rp, 'utf8'), sb, { filename: 'data/rules-index.js' });
+    const R = sb.window.BPRE_RULES_INDEX;
+    if (!R || !Array.isArray(R.books) || !Array.isArray(R.entries)) {
+      err('rules index: data/rules-index.js must set window.BPRE_RULES_INDEX with books and entries');
+    } else {
+      const bookIds = new Set(R.books.map((b) => b.id));
+      const seen = new Set();
+      const pageOk = /^\d+(-\d+)?(, \d+(-\d+)?)*$/;
+      for (const e of R.entries) {
+        const tag = `rules index "${e.term}"`;
+        if (!e.term) { err('rules index: an entry has no term'); continue; }
+        const key = e.term.toLowerCase();
+        if (seen.has(key)) err(`${tag}: duplicate term`);
+        seen.add(key);
+        if (!Array.isArray(e.refs) || !e.refs.length) err(`${tag}: no refs`);
+        for (const r of e.refs || []) {
+          if (!bookIds.has(r.book)) err(`${tag}: unknown book "${r.book}"`);
+          if (typeof r.pages !== 'string' || !pageOk.test(r.pages)) err(`${tag}: pages "${r.pages}" should look like "36" or "30-31, 38"`);
+          else for (const m of r.pages.matchAll(/(\d+)-(\d+)/g)) if (+m[2] <= +m[1]) err(`${tag}: range "${m[0]}" runs backwards`);
+        }
+      }
+      console.log(`${R.entries.length} rules index entries checked.`);
+    }
+  }
+}
+
 for (const w of warnings) console.log('warn  ' + w);
 for (const e of errors) console.log('ERROR ' + e);
 const byType = (t) => (D.cards || []).filter((c) => c.type === t).length;
