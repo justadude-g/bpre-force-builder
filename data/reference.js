@@ -36,7 +36,7 @@ window.BPRE_REFERENCE = {
         { term: "+1 to every die", text: "Any attack made during this phase gets +1 per die, including attacks granted by Intervention cards." },
         { term: "Grenades", text: "Throw up to 10\" at a point in line of sight. The grenade sits as a Frag chit and detonates in the Finishing Phase." },
         { term: "Other actions", text: "Setting explosives and most mission-specific actions happen here, even for units with no line of sight. Takes the entire turn and gains an ACT chit." },
-        { term: "QRF", text: "From turn 3 on, the defender rolls off for Quick Reaction Force activation at the start of the phase. No QRF on the last turn. Use only 1 die for turns 6 and 7." }
+        { term: "QRF", text: "From turn 3 on, the defender rolls off for Quick Reaction Force activation at the start of the phase. Use only 1 die for turns 5 and 6. No QRF on turn 7." }
       ]
     },
     {

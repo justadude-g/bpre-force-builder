@@ -16,7 +16,7 @@ window.BPRE_DATA = {
   version: "2026-10-29",
   pointsLabel: "CP",
   // Set this to your GitHub repo URL so the app can link to issues.
-  repoUrl: "https://github.com/justadude-g/bpre-roster",
+  repoUrl: "https://github.com/justadude-g/bpre-force-builder",
 
   sets: [
     { id: "core", name: "Core Set", short: "Core" },
