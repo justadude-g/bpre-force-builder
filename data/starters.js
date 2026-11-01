@@ -1,9 +1,10 @@
 /*
  * Starter forces: ready-made forces for new players.
  *
- * Each one is a complete, legal force at a standard Core Set tasking (150 CP).
- * Open one in the builder to change anything. These are suggestions built from
- * the unit and card text, not official lists.
+ * Each one is a complete, legal force for one game type: a Core Set Night Raid
+ * (150 CP), a Phase Line game (200 CP plus two 150 CP reinforcement waves) or a
+ * Spearhead Tasking (350 CP). Open one in the builder to change anything.
+ * These are suggestions built from the unit and card text, not official lists.
  *
  *   id, name     identifier (lowercase, hyphens) and display name
  *   faction      main faction id
@@ -14,6 +15,9 @@
  *   blurb        one or two sentences on what the force does
  *   tips         short play tips
  *   units        { unitId: quantity } for the main kill team
+ *   waves        Phase Line only: { pl1: { unitId: quantity }, pl2: { ... } }
+ *   slots        Phase Line only: { pl1: cardId, pl2: cardId } for the two
+ *                face-down Phase Line Fires cards
  *   cards        Intervention card ids (a full hand)
  *
  * Run `node tools/validate-data.mjs` after editing. It checks every force
@@ -158,5 +162,164 @@ window.BPRE_STARTERS = [
     ],
     units: { "spear-sysop": 1, "spear-marksman": 1, "hb-pkm-gunner": 1 },
     cards: ["int-break-contact", "int-hasty-ambush", "int-full-send"]
+  },
+
+  // ---- Phase Line (200 CP, then 150 CP at each phase line) ----
+  {
+    id: "cts-pl-push",
+    name: "Scorch Phase Line Push",
+    faction: "cts", mode: "phaseline", points: 200,
+    style: "Balanced",
+    blurb: "A full Scorch team up front, then two waves that bring more Assaulters, Recce Raiders and a second Advisor for the last push.",
+    tips: [
+      "Use the first 200 CP to grab ground and hold it. The Advisor and HVY machine gun cover while the Raiders push.",
+      "The second Advisor arrives in the last wave with another Scoria RS. Save it for the structure you are attacking."
+    ],
+    units: { "cts-advisor": 1, "cts-auto-rifleman-hvy": 1, "cts-assault-grenadier": 1, "cts-recce-raider": 1, "cts-assaulter": 1 },
+    waves: {
+      pl1: { "cts-assaulter": 2, "cts-recce-raider": 2, "cts-auto-rifleman": 1 },
+      pl2: { "cts-advisor": 1, "cts-assault-grenadier": 1, "cts-assaulter": 3 }
+    },
+    slots: { pl1: "plf-sensor-fuzed", pl2: "plf-gps-mortars" },
+    cards: ["int-troops-in-contact", "int-fix-and-finish", "int-break-contact"]
+  },
+  {
+    id: "nitto-pl-raid",
+    name: "Nitto Phase Line Raid",
+    faction: "nitto", mode: "phaseline", points: 200,
+    style: "Aggressive",
+    blurb: "Fast Nitto Pointmen and Riflemen with a Systems Operator in the first two groups. The last wave is all infantry.",
+    tips: [
+      "Nitto move 8\", so get to the phase line first and make the opponent come to you.",
+      "Pointmen breach doors for you. Use that to hit rooms from two sides."
+    ],
+    units: { "nitto-sysop": 1, "nitto-rifleman": 2, "nitto-pointman": 3 },
+    waves: {
+      pl1: { "nitto-sysop": 1, "nitto-rifleman": 1, "nitto-pointman": 2 },
+      pl2: { "nitto-rifleman": 2, "nitto-pointman": 3 }
+    },
+    slots: { pl1: "plf-drone-swarm", pl2: "plf-gps-mortars" },
+    cards: ["int-troops-in-contact", "int-hasty-ambush", "int-kill-not-capture"]
+  },
+  {
+    id: "hongbin-pl-line",
+    name: "Hongbin Phase Line Defence",
+    faction: "hongbin", mode: "phaseline", points: 200,
+    style: "Balanced",
+    blurb: "An Enabler and a PKM Gunner behind a screen of cheap Mercs, with Merc Grenadiers to clear rooms. Each wave adds more Mercs and another heavy hitter.",
+    tips: [
+      "Mercs are cheap. Trade them to keep the PKM Gunner alive and firing.",
+      "Merc Grenadiers only fire in the Direct Fire Phase, so set them up where they can see the door you want."
+    ],
+    units: { "hb-enabler": 1, "hb-pkm-gunner": 1, "hb-merc-grenadier": 1, "hb-merc": 3 },
+    waves: {
+      pl1: { "hb-enabler": 1, "hb-merc-grenadier": 1, "hb-merc": 4 },
+      pl2: { "hb-pkm-gunner": 1, "hb-merc-grenadier": 1, "hb-merc": 3 }
+    },
+    slots: { pl1: "plf-drone-swarm", pl2: "plf-gps-mortars" },
+    cards: ["int-troops-in-contact", "int-hasty-ambush", "int-break-contact"]
+  },
+  {
+    id: "aayari-pl-surge",
+    name: "Aayari Phase Line Surge",
+    faction: "aayari", mode: "phaseline", points: 200,
+    style: "Swarm",
+    blurb: "Muhtasib Sappers and Muhtasib with a Shurta PKM team on the first line. The waves add more Sappers and a crowd of Shurta.",
+    tips: [
+      "Sappers breach doors and detonate. Keep them alive until they are next to something worth killing.",
+      "The Shurta limit counts the whole force: four Shurta for every Muhtasib or Sapper."
+    ],
+    units: { "aa-muhtasib-sapper": 2, "aa-muhtasib": 4, "aa-shurta-pkm": 1, "aa-assistant-pkm": 1, "aa-shurta": 8 },
+    waves: {
+      pl1: { "aa-muhtasib-sapper": 2, "aa-muhtasib": 3, "aa-shurta": 11 },
+      pl2: { "aa-muhtasib-sapper": 3, "aa-muhtasib": 3, "aa-shurta": 6 }
+    },
+    slots: { pl1: "plf-hesh", pl2: "plf-drone-swarm" },
+    cards: ["int-ambush", "int-front-towards-enemy", "int-hasty-ambush"]
+  },
+  {
+    id: "spear-pl-patrol",
+    name: "SPEAR Phase Line Patrol",
+    faction: "spear", mode: "phaseline", points: 200,
+    style: "Support",
+    blurb: "Marksmen and Assaulters led by a Systems Operator with two Quadrotors. Respirators come standard, so a gas card does not scare them.",
+    tips: [
+      "Marksmen can activate twice in the Direct Fire Phase. Put them where they can see the approach.",
+      "Assaulters breach doors and throw frags. Send them in once the Marksmen have the approach covered."
+    ],
+    units: { "spear-sysop": 1, "spear-marksman": 2, "spear-assaulter": 4 },
+    waves: {
+      pl1: { "spear-sysop": 1, "spear-marksman": 1, "spear-assaulter": 3 },
+      pl2: { "spear-marksman": 2, "spear-assaulter": 4 }
+    },
+    slots: { pl1: "plf-drone-swarm", pl2: "plf-gps-mortars" },
+    cards: ["int-kill-not-capture", "int-break-contact", "int-troops-in-contact"]
+  },
+
+  // ---- Spearhead (350 CP) ----
+  {
+    id: "cts-sh-assault",
+    name: "Scorch Spearhead Assault",
+    faction: "cts", mode: "spearhead", points: 350,
+    style: "Balanced",
+    blurb: "An Advisor and an Assault Tech for two Scoria RS cards, an HVY machine gun and a grenadier for support, and six cheap models to take the building.",
+    tips: [
+      "The Assault Tech can call Fires on any friendly unit's line of sight, so it can strike from the back.",
+      "Take objectives with the Assaulters and Recces. Keep the specialists back."
+    ],
+    units: { "cts-advisor": 1, "cts-assault-tech": 1, "cts-auto-rifleman-hvy": 1, "cts-assault-grenadier": 1, "cts-recce": 2, "cts-assaulter": 4 },
+    cards: ["int-react-to-contact", "int-troops-in-contact", "int-break-contact"]
+  },
+  {
+    id: "nitto-sh-strike",
+    name: "Nitto Spearhead Strike",
+    faction: "nitto", mode: "spearhead", points: 350,
+    style: "Support",
+    blurb: "Two Systems Operators with four Quadrotor cards, then Riflemen and Pointmen to move in behind them.",
+    tips: [
+      "Systems Operators survive a failed save as Mortally Wounded, but they die at the end of the Finishing Phase. Keep them out of harm's way.",
+      "Quadrotors are Fires cards, so any Glint-capable unit holding one can use it."
+    ],
+    units: { "nitto-sysop": 2, "nitto-rifleman": 3, "nitto-pointman": 5 },
+    cards: ["int-kill-not-capture", "int-hasty-ambush", "int-troops-in-contact"]
+  },
+  {
+    id: "hongbin-sh-line",
+    name: "Hongbin Spearhead Line",
+    faction: "hongbin", mode: "spearhead", points: 350,
+    style: "Balanced",
+    blurb: "Two Enablers bring four FengHuang-918 cards. A PKM Gunner and a Merc Grenadier give you a base of fire, with nine Mercs to fill the building.",
+    tips: [
+      "The PKM Gunner can take two ACT tokens, but only from Direct Fire or Immediate Actions.",
+      "Mercs are cheap. Use them to hold doors and windows while the Enablers call down the FengHuang."
+    ],
+    units: { "hb-enabler": 2, "hb-pkm-gunner": 1, "hb-merc-grenadier": 1, "hb-merc": 9 },
+    cards: ["int-hasty-ambush", "int-break-contact", "int-troops-in-contact"]
+  },
+  {
+    id: "aayari-sh-wave",
+    name: "Aayari Spearhead Wave",
+    faction: "aayari", mode: "spearhead", points: 350,
+    style: "Swarm",
+    blurb: "Six Sappers and six Muhtasib with a Shurta PKM team and twelve Shurta. Plenty of ways to blow a door and fill the room behind it.",
+    tips: [
+      "Sappers and Muhtasib detonate in the Maneuver Phase if they have not attacked. Move them next to the enemy first.",
+      "Use the Shurta PKM Gunner and Assistant as a base of fire while the rest advance."
+    ],
+    units: { "aa-muhtasib-sapper": 6, "aa-muhtasib": 6, "aa-shurta-pkm": 1, "aa-assistant-pkm": 1, "aa-shurta": 12 },
+    cards: ["int-ambush", "int-front-towards-enemy", "int-hasty-ambush"]
+  },
+  {
+    id: "spear-sh-team",
+    name: "SPEAR Spearhead Team",
+    faction: "spear", mode: "spearhead", points: 350,
+    style: "Support",
+    blurb: "Two Systems Operators and three Marksmen, with seven Assaulters to breach and clear. Respirators are included.",
+    tips: [
+      "Systems Operators can call Fires on a friendly's line of sight and redirect it if it lands close.",
+      "Marksmen and Assaulters take a smaller penalty on Immediate Actions, so shoot first when you can."
+    ],
+    units: { "spear-sysop": 2, "spear-marksman": 3, "spear-assaulter": 7 },
+    cards: ["int-kill-not-capture", "int-break-contact", "int-troops-in-contact"]
   }
 ];

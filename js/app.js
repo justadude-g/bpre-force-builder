@@ -279,6 +279,7 @@
     setFilter: Array.isArray(savedUi.setFilter) ? savedUi.setFilter.filter(function (id) { return SETS[id]; }) : [],
     unitSets: Array.isArray(savedUi.unitSets) ? savedUi.unitSets.filter(function (id) { return SETS[id]; }) : [],
     starterFaction: 'all',
+    starterMode: 'all',
     ruleBook: 'all',
     undo: null,
     pendingDelete: null,
@@ -728,51 +729,68 @@
   function starterState(st) {
     var cards = {};
     (st.cards || []).forEach(function (id) { cards[id] = 1; });
-    return sanitize({ name: st.name, mode: st.mode, points: st.points, faction: st.faction, ally: st.ally, units: { main: st.units }, cards: cards });
+    var units = { main: st.units };
+    Object.keys(st.waves || {}).forEach(function (id) { units[id] = st.waves[id]; });
+    return sanitize({ name: st.name, mode: st.mode, points: st.points, faction: st.faction, ally: st.ally, units: units, cards: cards, slots: st.slots || {} });
   }
 
   function renderStarters() {
     var box = $('#starter-body');
     if (!box) return;
     if (!ST.length) { box.innerHTML = '<div class="empty">No starter forces yet (data/starters.js).</div>'; return; }
-    var chips = '<div class="chips" role="group" aria-label="Filter by faction">' +
-      '<button type="button" class="chip" aria-pressed="' + (ui.starterFaction === 'all') + '" data-action="starter-faction" data-id="all">All</button>' +
+    var modeIds = D.modes.filter(function (m) { return ST.some(function (x) { return x.mode === m.id; }); });
+    var chips = '<div class="chips" role="group" aria-label="Filter by game type">' +
+      '<button type="button" class="chip" aria-pressed="' + (ui.starterMode === 'all') + '" data-action="starter-mode" data-id="all">All game types</button>' +
+      modeIds.map(function (m) {
+        return '<button type="button" class="chip" aria-pressed="' + (ui.starterMode === m.id) + '" data-action="starter-mode" data-id="' + esc(m.id) + '">' + esc(m.name) + '</button>';
+      }).join('') + '</div>' +
+      '<div class="chips" role="group" aria-label="Filter by faction">' +
+      '<button type="button" class="chip" aria-pressed="' + (ui.starterFaction === 'all') + '" data-action="starter-faction" data-id="all">All factions</button>' +
       D.factions.filter(function (f) { return ST.some(function (x) { return x.faction === f.id; }); }).map(function (f) {
         return '<button type="button" class="chip chip-emblem" aria-pressed="' + (ui.starterFaction === f.id) + '" data-action="starter-faction" data-id="' + esc(f.id) + '">' + emblem(f.id, 'emblem-xs') + esc(f.name) + '</button>';
       }).join('') + '</div>';
 
-    var cards = ST.filter(function (x) { return ui.starterFaction === 'all' || x.faction === ui.starterFaction; }).map(function (x) {
+    var shown = ST.filter(function (x) { return (ui.starterFaction === 'all' || x.faction === ui.starterFaction) && (ui.starterMode === 'all' || x.mode === ui.starterMode); });
+    var cards = shown.map(function (x) {
       var f = FACTIONS[x.faction];
       var a = x.ally ? FACTIONS[x.ally] : null;
       var st = starterState(x);
-      var dep = deployments(st)[0];
-      var rows = depRows(st, dep);
-      var total = depTotal(st, dep);
+      var deps = deployments(st).filter(function (d) { return depRows(st, d).length; });
+      var rows = [];
+      deps.forEach(function (d) { rows = rows.concat(depRows(st, d)); });
       var need = [];
       rows.forEach(function (r) { if (need.indexOf(r.u.set) === -1) need.push(r.u.set); });
       need.sort(function (p, q) { return D.sets.map(function (z) { return z.id; }).indexOf(p) - D.sets.map(function (z) { return z.id; }).indexOf(q); });
       var fires = grantedFires(st);
+      var plf = fireSlots(st).filter(function (sl) { return st.slots[sl.id] && CARDS[st.slots[sl.id]]; });
+      var depCp = deps.map(function (d, i) {
+        return '<span class="turn-chip"><b class="mono">' + depTotal(st, d) + '</b>' + (i === 0 ? ' / ' + st.points : '') + ' ' + PL + (deps.length > 1 ? ' ' + esc(d.name) : '') + '</span>';
+      }).join('');
+      var unitCols = deps.map(function (d) {
+        return (deps.length > 1 ? '<h3>' + esc(d.name) + '</h3>' : '<h3>Units</h3>') + '<ul class="starter-list">' +
+          depRows(st, d).map(function (r) { return '<li><span class="q">' + r.q + '\u00d7</span><span class="n">' + esc(r.u.name) + '</span><span class="p mono">' + r.cost + ' ' + PL + '</span></li>'; }).join('') +
+          '</ul>';
+      }).join('');
       return '<article class="starter" id="s-' + esc(x.id) + '">' +
         '<header>' + emblem(x.faction, 'emblem-lg') + (a ? emblem(x.ally, 'emblem-lg') : '') +
         '<div><span class="bloc-name">' + esc(f.name) + (a ? ' + ' + esc(a.name) : '') + '</span>' +
         '<h2>' + esc(x.name) + '</h2></div></header>' +
         '<div class="starter-tags"><span class="turn-chip on">' + esc(x.style || '') + '</span>' +
-        '<span class="turn-chip"><b class="mono">' + total + '</b> / ' + st.points + ' ' + PL + '</span>' +
+        '<span class="turn-chip">' + esc(MODES[x.mode].name) + '</span>' + depCp +
         '<span class="turn-chip"><b class="mono">' + modelCount(st) + '</b> models</span>' +
         '<span class="turn-chip">Units from ' + need.map(function (id) { return esc(SETS[id].name); }).join(' + ') + '</span></div>' +
         '<p class="starter-blurb">' + esc(x.blurb) + '</p>' +
-        '<div class="starter-cols"><div><h3>Units</h3><ul class="starter-list">' +
-        rows.map(function (r) { return '<li><span class="q">' + r.q + '×</span><span class="n">' + esc(r.u.name) + '</span><span class="p mono">' + r.cost + ' ' + PL + '</span></li>'; }).join('') +
-        '</ul></div><div><h3>Intervention hand</h3><ul class="starter-list">' +
+        '<div class="starter-cols"><div>' + unitCols + '</div><div><h3>Intervention hand</h3><ul class="starter-list">' +
         pickedCards(st, 'intervention').map(function (r) { return '<li><span class="n">' + esc(r.c.name) + '</span><span class="p">' + esc(r.c.notes || '') + '</span></li>'; }).join('') +
-        '</ul>' + (fires.length ? '<h3>Fires (from units)</h3><ul class="starter-list">' + fires.map(function (g) { return '<li><span class="q">' + g.n + '×</span><span class="n">' + esc(g.c.name) + '</span></li>'; }).join('') + '</ul>' : '') +
+        '</ul>' + (plf.length ? '<h3>Phase Line Fires</h3><ul class="starter-list">' + plf.map(function (sl) { return '<li><span class="n">' + esc(slotShort(sl)) + ': ' + esc(CARDS[st.slots[sl.id]].name) + '</span><span class="p">' + esc(CARDS[st.slots[sl.id]].notes || '') + '</span></li>'; }).join('') + '</ul>' : '') +
+        (fires.length ? '<h3>Fires (from units)</h3><ul class="starter-list">' + fires.map(function (g) { return '<li><span class="q">' + g.n + '\u00d7</span><span class="n">' + esc(g.c.name) + '</span></li>'; }).join('') + '</ul>' : '') +
         '</div></div>' +
         ((x.tips || []).length ? '<h3>Playing it</h3><ul class="starter-tips">' + x.tips.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>' : '') +
         '<div class="starter-actions"><button type="button" class="btn primary" data-action="load-starter" data-id="' + esc(x.id) + '">Open in builder</button></div>' +
         '</article>';
     }).join('');
 
-    box.innerHTML = chips + '<div class="starter-grid">' + cards + '</div>';
+    box.innerHTML = chips + (shown.length ? '<div class="starter-grid">' + cards + '</div>' : '<div class="empty">No starter forces match that filter.</div>');
   }
 
 
@@ -1108,6 +1126,7 @@
     },
     'rules-book': function (id) { ui.ruleBook = id; renderRulesIndex(); },
     'starter-faction': function (id) { ui.starterFaction = id; renderStarters(); },
+    'starter-mode': function (id) { ui.starterMode = id; renderStarters(); },
     'load-starter': function (id) {
       var x = ST.filter(function (z) { return z.id === id; })[0];
       if (!x) return;

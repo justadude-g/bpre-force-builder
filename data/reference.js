@@ -49,7 +49,7 @@ window.BPRE_REFERENCE = {
         { term: "Immediate Actions", text: "Enter or start in the line of sight of an opponent with no ACT chit and that unit may shoot you first, at -3 to the total roll. It then takes an ACT chit. Any number of units may respond; none are obliged to." },
         { term: "Crossing cover", text: "Once per activation a unit may cross one waist-high feature up to 2\" long. Roll 2D10: 10+ keeps moving, 9 or less staggers it on the far side and ends the activation. No attacking mid-crossing." },
         { term: "Doors", text: "Opening or closing a door costs 3\" of movement." },
-        { term: "Glint", text: "Advisors and Hongbin Enablers may call down a Fires card once per turn on an exterior point in line of sight, without interrupting their move or shot. Assault Techs and Systems Operators Glint with their Quadrotors." }
+        { term: "Glint", text: "Advisors, Hongbin Enablers, Assault Techs and Systems Operators may call down a Fires card from their hand once per turn on an exterior point in line of sight, without interrupting their move or shot. Units bring their own Fires cards, and any Fires card in hand can be used." }
       ]
     },
     {

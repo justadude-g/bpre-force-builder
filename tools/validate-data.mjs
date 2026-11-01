@@ -145,27 +145,51 @@ for (const c of D.cards || []) {
       if (!x.name || !x.blurb) err(`${tag}: needs a name and a blurb`);
       if (!(mode.presets || []).some((p) => p.points === x.points)) warn(`${tag}: ${x.points} CP is not a preset for ${mode.name}`);
       const allowed = [x.faction, x.ally].filter(Boolean);
-      let total = 0;
-      let used = {};
-      for (const [id, q] of Object.entries(x.units || {})) {
-        const u = unitById.get(id);
-        if (!u) { err(`${tag}: unknown unit "${id}"`); continue; }
-        if (!allowed.includes(u.faction)) err(`${tag}: ${u.name} (${u.faction}) is not in this force`);
-        if (!isInt(q, 1)) err(`${tag}: bad quantity for ${id}`);
-        total += (u.cost || 0) * q;
-        used[id] = q;
+      // Pools: main at the force's CP limit, plus each Phase Line wave at its own limit.
+      const pools = [{ id: 'main', name: 'main force', limit: x.points, units: x.units || {} }];
+      for (const [wid, wu] of Object.entries(x.waves || {})) {
+        const d = (mode.deployments || []).find((dd) => dd.id === wid && !dd.reserve);
+        if (!d) { err(`${tag}: ${mode.name} has no deployment "${wid}"`); continue; }
+        pools.push({ id: wid, name: d.name, limit: d.points, units: wu });
       }
-      if (total > x.points) err(`${tag}: ${total} CP is over the ${x.points} CP limit`);
-      if (total < x.points - 20) warn(`${tag}: only ${total} of ${x.points} CP used`);
-      for (const [id, q] of Object.entries(used)) {
-        const u = unitById.get(id);
-        if (u.perPoints && q > Math.floor(total / u.perPoints)) err(`${tag}: ${u.name} is limited to one per ${u.perPoints} CP`);
+      for (const d of mode.deployments || []) if (!d.optional && !d.reserve && !(x.waves || {})[d.id]) warn(`${tag}: no units for ${d.name}`);
+      const used = {};
+      for (const pool of pools) {
+        let total = 0;
+        const here = {};
+        for (const [id, q] of Object.entries(pool.units)) {
+          const u = unitById.get(id);
+          if (!u) { err(`${tag}: unknown unit "${id}"`); continue; }
+          if (!allowed.includes(u.faction)) err(`${tag}: ${u.name} (${u.faction}) is not in this force`);
+          if (!isInt(q, 1)) err(`${tag}: bad quantity for ${id}`);
+          total += (u.cost || 0) * q;
+          here[id] = q;
+          used[id] = (used[id] || 0) + q;
+        }
+        if (total > pool.limit) err(`${tag}: ${pool.name} is ${total} CP, over its ${pool.limit} CP limit`);
+        if (total < pool.limit - 20) warn(`${tag}: ${pool.name} uses only ${total} of ${pool.limit} CP`);
+        for (const [id, q] of Object.entries(here)) {
+          const u = unitById.get(id);
+          if (u.perPoints && q > Math.floor(total / u.perPoints)) err(`${tag}: ${u.name} is limited to one per ${u.perPoints} CP in the ${pool.name}`);
+        }
       }
       for (const r of D.ratios || []) {
         const have = r.members.reduce((n, id) => n + (used[id] || 0), 0);
         const base = r.per.reduce((n, id) => n + (used[id] || 0), 0);
         if (have > base * r.max) err(`${tag}: breaks "${r.label}" (${have} against room for ${base * r.max})`);
       }
+      const slotDefs = (mode.fireSlots || []).filter((sl) => !sl.optional);
+      const slotUsed = new Set();
+      for (const sl of slotDefs) {
+        const cid = (x.slots || {})[sl.id];
+        const c = cid && cardById.get(cid);
+        if (!c) { err(`${tag}: needs a Phase Line Fires card at ${sl.name}`); continue; }
+        if (!c.slot) err(`${tag}: "${cid}" is not a Phase Line Fires card`);
+        if (slotUsed.has(cid)) err(`${tag}: "${cid}" is used at two lines`);
+        slotUsed.add(cid);
+        if (c.factions && c.factions.length && !c.factions.some((f) => allowed.includes(f))) err(`${tag}: "${cid}" needs ${c.factions.join(' or ')} in the force`);
+      }
+      for (const sid of Object.keys(x.slots || {})) if (!slotDefs.some((sl) => sl.id === sid)) err(`${tag}: ${mode.name} has no Phase Line Fires slot "${sid}"`);
       const hand = x.cards || [];
       if (typeof mode.interventionLimit === 'number' && hand.length !== mode.interventionLimit) err(`${tag}: needs ${mode.interventionLimit} Intervention cards, has ${hand.length}`);
       if (new Set(hand).size !== hand.length) err(`${tag}: repeats a card`);

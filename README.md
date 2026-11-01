@@ -7,7 +7,7 @@ A force builder for **Black Powder Red Earth**. It runs in any browser, needs no
 3. Build each deployment. The app tracks CP per pool, the one-per-100-CP limits, the Muhtasib-to-Shurta ratio, QRF discounts, and upgrades such as respirators and Forward Deployed.
 4. Choose a hand of three unique Intervention cards from any set. Unit Fires cards (Scoria RS, FengHuang-918, Quadrotor) are added automatically; in Phase Line you place one Phase Line Fires card at each line. Faction-emblem cards only appear for forces that include that faction.
 
-New to the game? **Starter forces** has two ready-made 150 CP forces for each faction. Open one in the builder and change anything you like.
+New to the game? **Starter forces** has ready-made forces for each faction in all three game types: Core Set (150 CP), Phase Line (200 CP plus two 150 CP waves, with Phase Line Fires cards chosen) and Spearhead (350 CP). Open one in the builder and change anything you like.
 
 **Rules index** is a searchable keyword list. Each keyword points to the book and printed page number, so you can find the rule and read it in the rulebook.
 

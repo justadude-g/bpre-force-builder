@@ -88,9 +88,11 @@ Force-wide limits such as "every Muhtasib permits four Shurta": `{ id, label, me
 
 ## Starter forces (`data/starters.js`)
 
-Ready-made forces for new players, shown on the Starter forces page. Each is `{ id, name, faction, ally?, mode, points, style, blurb, tips, units, cards }`.
+Ready-made forces for new players, shown on the Starter forces page. Each is `{ id, name, faction, ally?, mode, points, style, blurb, tips, units, waves?, slots?, cards }`.
 
 - `units` is `{ unitId: quantity }` for the main kill team.
+- `waves` is for Phase Line only: `{ pl1: { unitId: quantity }, pl2: { ... } }`. Each wave has its own 150 CP limit and its own one-per-100 CP limits.
+- `slots` is for Phase Line only: `{ pl1: cardId, pl2: cardId }`, the two face-down Phase Line Fires cards. They must be different cards, and faction cards need that faction in the force.
 - `cards` is a full hand of Intervention card ids.
 - The page works out the CP total, the models, which sets the units come from and the Fires cards the units bring.
 
