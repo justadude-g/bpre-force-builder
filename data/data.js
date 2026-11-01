@@ -13,7 +13,7 @@
  * rules text from the books or cards into this file.
  */
 window.BPRE_DATA = {
-  version: "2026-10-29",
+  version: "2026-11-01",
   pointsLabel: "CP",
   // Set this to your GitHub repo URL so the app can link to issues.
   repoUrl: "https://github.com/justadude-g/bpre-force-builder",

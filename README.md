@@ -18,21 +18,21 @@ Forces save to your browser. You can copy a force as text for Discord or email, 
 Once GitHub Pages is on (see below), the app lives at:
 
 ```
-https://justadude-g.github.io/bpre-roster/
+https://justadude-g.github.io/bpre-force-builder/
 ```
 
 To run it offline, download `dist/bpre-force-builder.html` and open it. It is the whole app in one file.
 
 ## Put it on GitHub
 
-1. The repository is [justadude-g/bpre-roster](https://github.com/justadude-g/bpre-roster). For a fork or a fresh copy, create an empty public repository (no README, .gitignore or license).
+1. The repository is [justadude-g/bpre-force-builder](https://github.com/justadude-g/bpre-force-builder). For a fork or a fresh copy, create an empty public repository (no README, .gitignore or license).
 2. Upload the contents of this folder. Either drag the files into the GitHub web page ("uploading an existing file"), or from a terminal:
    ```sh
-   cd bpre-roster
+   cd bpre-force-builder
    git init -b main
    git add -A
    git commit -m "Initial release"
-   git remote add origin https://github.com/justadude-g/bpre-roster.git
+   git remote add origin https://github.com/justadude-g/bpre-force-builder.git
    git push -u origin main
    ```
 3. In the repository go to **Settings → Pages**. Under "Build and deployment" choose **Deploy from a branch**, branch `main`, folder `/ (root)`, and save. The site is live a minute or two later.

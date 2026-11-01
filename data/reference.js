@@ -36,7 +36,7 @@ window.BPRE_REFERENCE = {
         { term: "+1 to every die", text: "Any attack made during this phase gets +1 per die, including attacks granted by Intervention cards." },
         { term: "Grenades", text: "Throw up to 10\" at a point in line of sight. The grenade sits as a Frag chit and detonates in the Finishing Phase." },
         { term: "Other actions", text: "Setting explosives and most mission-specific actions happen here, even for units with no line of sight. Takes the entire turn and gains an ACT chit." },
-        { term: "QRF", text: "From turn 3 on, the defender rolls off for Quick Reaction Force activation at the start of the phase. Use only 1 die for turns 5 and 6. No QRF on turn 7." }
+        { term: "QRF", text: "From turn 3 on, the defender rolls off for Quick Reaction Force activation at the start of the phase. No QRF on the last turn. Use only 1 die on the third and second-from-last turns (turns 5 and 6 in a Night Raid)." }
       ]
     },
     {
@@ -49,7 +49,7 @@ window.BPRE_REFERENCE = {
         { term: "Immediate Actions", text: "Enter or start in the line of sight of an opponent with no ACT chit and that unit may shoot you first, at -3 to the total roll. It then takes an ACT chit. Any number of units may respond; none are obliged to." },
         { term: "Crossing cover", text: "Once per activation a unit may cross one waist-high feature up to 2\" long. Roll 2D10: 10+ keeps moving, 9 or less staggers it on the far side and ends the activation. No attacking mid-crossing." },
         { term: "Doors", text: "Opening or closing a door costs 3\" of movement." },
-        { term: "Glint", text: "Advisors and Hongbin Enablers may call down a Fires card once per turn on an exterior point in line of sight, without interrupting their move or shot." }
+        { term: "Glint", text: "Advisors and Hongbin Enablers may call down a Fires card once per turn on an exterior point in line of sight, without interrupting their move or shot. Assault Techs and Systems Operators Glint with their Quadrotors." }
       ]
     },
     {
@@ -57,7 +57,7 @@ window.BPRE_REFERENCE = {
       number: 3,
       title: "Finishing Phase",
       kicker: "Grenades detonate and the knife-fighting starts",
-      lead: "Resolve in order. Here the ACT chit works backwards: a unit spends its chit to attack, and no chit means it is done.",
+      lead: "Resolve in order. Every unit should hold an ACT chit by the end of the Maneuver Phase. A unit that acts in this phase removes its chit to track it, and a unit with no chit is done.",
       items: [
         { term: "1. Frag chits", text: "Center the template on each chit, roll 1D10 to bounce it along the 2\" increment, then detonate with a 2\" area of effect. A wall between chit and landing point keeps the blast on the chit's side. Destroy doors in the radius." },
         { term: "2. Base to base", text: "A unit touching an opponent's base inside its own line of sight must attack that opponent. Fighting continues until no bases are touching." },
@@ -112,7 +112,7 @@ window.BPRE_REFERENCE = {
       title: "Phase Line and Spearhead rules",
       kicker: "Expansion additions",
       items: [
-        { term: "CQB results", text: "Roll 5D10 and read the dice individually. Five hits is a headshot that overrides any save; three or four is a normal hit; two staggers with no save; one or none does nothing. The whole roll is one attack, so the attacker shares modifiers across the dice after rolling. Shooting up costs +1 per level of elevation." },
+        { term: "CQB results", text: "Roll 5D10 and read the dice individually. Five hits is a headshot that overrides any save; three or four is a normal hit; two staggers with no save; one or none does nothing. The whole roll is one attack, so the attacker shares modifiers across the dice after rolling. Shooting up costs +1 per level of elevation: add 1 to the number needed or take 1 off the roll." },
         { term: "Stairwells", text: "A unit in a stairwell is visible from both levels and blocks movement for both sides. Enter and leave only where a step meets a floor. A unit inside takes -1 on save rolls." },
         { term: "Belt fed double activation", text: "CTS Automatic Riflemen and HVY, and Hongbin and Aayari PKM gunners, may take two ACT tokens a turn. Both must come from Direct Fire or Immediate Actions, a unit that activated in the Maneuver Phase cannot take the second, and only one Immediate Action per opponent activation." },
         { term: "Grenadiers", text: "Firing a grenade replaces the unit's attack and bursts 2\" across, 180 degrees off a wall or 360 degrees from a point. CTS Assault Grenadiers fire in Direct Fire or Maneuver; Hongbin Merc Grenadiers only in Direct Fire." },
