@@ -98,6 +98,16 @@ Ready-made forces for new players, shown on the Starter forces page. Each is `{ 
 
 `node tools/validate-data.mjs` checks each force against the CP limit, the one-per-100 CP limits, the Muhtasib and Shurta ratio, allowed allies and faction cards. Keep them to what the unit and card text says. They are suggestions, not official lists.
 
+## Introduction (`data/intro.js`)
+
+The page new players see first. It is a short summary in plain English, not a copy of the rulebook.
+
+- `lead` is the sentence under the title.
+- `sections` are shown in order. Each has `id`, `title`, `kicker?` and any of `paras`, `items` (`{ term, text }`), `steps` (`{ title, text, items? }`), `blocs: true` (the two sides, built from `reference.js`) and `next` (buttons to other pages).
+- `factions` is one line per faction for the two-sides block.
+
+`node tools/validate-data.mjs` checks the structure. Keep the facts in line with the books and the Quick reference.
+
 ## Rules index (`data/rules-index.js`)
 
 A searchable list of keywords with the book and page to read. It points to the rule and does not reproduce it, so keep notes short and in your own words.

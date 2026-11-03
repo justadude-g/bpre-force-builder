@@ -238,6 +238,34 @@ for (const c of D.cards || []) {
   }
 }
 
+// ---- introduction ----
+{
+  const ip = join(root, 'data', 'intro.js');
+  if (existsSync(ip)) {
+    const sb = { window: {} };
+    vm.runInNewContext(readFileSync(ip, 'utf8'), sb, { filename: 'data/intro.js' });
+    const I = sb.window.BPRE_INTRO;
+    if (!I || !Array.isArray(I.sections)) err('intro: data/intro.js must set window.BPRE_INTRO with sections');
+    else {
+      const seenIds = new Set();
+      const views = ['build', 'intro', 'starters', 'reference', 'rules', 'factions'];
+      const defs = (list, tag) => { for (const it of list || []) if (!it.term || !it.text) err(`intro ${tag}: every item needs a term and text`); };
+      for (const sec of I.sections) {
+        const tag = `"${sec.id || sec.title}"`;
+        if (!sec.id || !sec.title) err(`intro: a section needs an id and a title (${tag})`);
+        if (seenIds.has(sec.id)) err(`intro ${tag}: duplicate id`);
+        seenIds.add(sec.id);
+        defs(sec.items, tag);
+        for (const st of sec.steps || []) { if (!st.title || !st.text) err(`intro ${tag}: every step needs a title and text`); defs(st.items, tag); }
+        for (const n of sec.next || []) if (!views.includes(n.view) || !n.label) err(`intro ${tag}: bad link "${n.view}"`);
+      }
+      for (const fid of Object.keys(I.factions || {})) if (!(D.factions || []).some((f) => f.id === fid)) err(`intro: unknown faction "${fid}"`);
+      for (const f of D.factions || []) if (!(I.factions || {})[f.id]) warn(`intro: no one-line summary for ${f.name}`);
+      console.log(`${I.sections.length} introduction sections checked.`);
+    }
+  }
+}
+
 for (const w of warnings) console.log('warn  ' + w);
 for (const e of errors) console.log('ERROR ' + e);
 const byType = (t) => (D.cards || []).filter((c) => c.type === t).length;

@@ -26,6 +26,7 @@
   var ST = window.BPRE_STARTERS || [];
   var R = window.BPRE_REFERENCE || null;
   var RI = window.BPRE_RULES_INDEX || null;
+  var IN = window.BPRE_INTRO || null;
   function emblem(fid, cls) {
     var f = FACTIONS[fid];
     if (!f || !f.emblem) return '';
@@ -44,6 +45,7 @@
   var LS_CURRENT = 'bpre-roster:current:v2';
   var LS_SAVED = 'bpre-roster:saved:v2';
   var LS_UI = 'bpre-roster:ui';
+  var LS_INTRO = 'bpre-roster:intro-seen';
 
   var storage = {
     get: function (k, fallback) {
@@ -670,7 +672,7 @@
   }
 
   // ---------- views ----------
-  var VIEWS = ['build', 'starters', 'reference', 'rules', 'factions'];
+  var VIEWS = ['build', 'intro', 'starters', 'reference', 'rules', 'factions'];
   function setView(v, keepScroll) {
     if (VIEWS.indexOf(v) === -1) v = 'build';
     ui.view = v;
@@ -679,6 +681,7 @@
       $('#nav-' + id).setAttribute('aria-selected', String(id === v));
     });
     document.body.setAttribute('data-view', v);
+    if (v === 'intro') { renderIntro(); storage.set(LS_INTRO, true); }
     if (v === 'starters') renderStarters();
     if (v === 'reference') renderReference();
     if (v === 'rules') renderRulesIndex();
@@ -724,6 +727,44 @@
     box.innerHTML = html;
   }
 
+
+  // ---------- introduction ----------
+  function renderIntro() {
+    var box = $('#intro-body');
+    if (!box) return;
+    if (!IN || !IN.sections) { box.innerHTML = '<div class="empty">Introduction content is missing (data/intro.js).</div>'; return; }
+    $('#intro-lead').textContent = IN.lead || '';
+
+    function dl(items) {
+      return '<dl>' + items.map(function (it) { return '<div><dt>' + esc(it.term) + '</dt><dd>' + esc(it.text) + '</dd></div>'; }).join('') + '</dl>';
+    }
+    function blocs() {
+      var list = (R && R.blocs) || [];
+      return '<div class="intro-blocs">' + list.map(function (b) {
+        return '<div class="bloc-col"><h3>' + esc(b.name) + '</h3><ul class="intro-factions">' +
+          b.factions.filter(function (fid) { return FACTIONS[fid]; }).map(function (fid) {
+            var f = FACTIONS[fid];
+            return '<li>' + emblem(fid, 'emblem-md') + '<div><b>' + esc(f.name) + '</b><span>' + esc((IN.factions && IN.factions[fid]) || f.tagline || '') + '</span></div></li>';
+          }).join('') + '</ul><p>' + esc(b.note || '') + '</p></div>';
+      }).join('') + '</div>' +
+      (R && R.restriction ? '<aside class="restriction"><h3>' + esc(R.restriction.title) + '</h3><p>' + esc(R.restriction.text) + '</p></aside>' : '');
+    }
+
+    box.innerHTML = '<div class="intro-stack">' + IN.sections.map(function (sec) {
+      return '<section class="ref-card intro-card" id="intro-' + esc(sec.id) + '">' +
+        '<header><h2>' + esc(sec.title) + '</h2>' + (sec.kicker ? '<span class="ref-kicker">' + esc(sec.kicker) + '</span>' : '') + '</header>' +
+        (sec.paras || []).map(function (t) { return '<p class="intro-p">' + esc(t) + '</p>'; }).join('') +
+        (sec.blocs ? blocs() : '') +
+        (sec.items && sec.items.length ? dl(sec.items) : '') +
+        (sec.steps && sec.steps.length ? '<ol class="intro-steps">' + sec.steps.map(function (st) {
+          return '<li><div class="intro-step-body"><h3>' + esc(st.title) + '</h3><p>' + esc(st.text) + '</p>' + (st.items && st.items.length ? dl(st.items) : '') + '</div></li>';
+        }).join('') + '</ol>' : '') +
+        (sec.next && sec.next.length ? '<div class="intro-next">' + sec.next.map(function (n) {
+          return '<button type="button" class="intro-link" data-action="set-view" data-id="' + esc(n.view) + '"><b>' + esc(n.label) + '</b><span>' + esc(n.text) + '</span></button>';
+        }).join('') + '</div>' : '') +
+        '</section>';
+    }).join('') + '</div>';
+  }
 
   // ---------- starter forces ----------
   function starterState(st) {
@@ -1344,7 +1385,8 @@
   $('#ref-search').addEventListener('input', renderReference);
   $('#rules-search').addEventListener('input', renderRulesIndex);
   var startView = (location.hash || '').replace('#', '');
-  setView(VIEWS.indexOf(startView) !== -1 ? startView : 'build', true);
+  if (VIEWS.indexOf(startView) === -1) startView = (IN && !storage.get(LS_INTRO, false) && !modelCount(state)) ? 'intro' : 'build';
+  setView(startView, true);
   window.addEventListener('hashchange', function () {
     var h = (location.hash || '').replace('#', '');
     if (VIEWS.indexOf(h) !== -1 && h !== ui.view) setView(h);

@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Saira+Stencil+One&display=swap">
-<link rel="stylesheet" href="css/style.css?v=2a880c93">
+<link rel="stylesheet" href="css/style.css?v=f606eaa0">
 <script>
   // Match the device by default. Apply the saved choice before first paint so the page doesn't flash.
   (function () {
@@ -45,6 +45,7 @@
   <nav class="view-nav" aria-label="Sections">
     <div class="view-nav-inner" role="tablist">
       <button type="button" role="tab" class="view-tab" id="nav-build" data-action="set-view" data-id="build" aria-controls="view-build">Build</button>
+      <button type="button" role="tab" class="view-tab" id="nav-intro" data-action="set-view" data-id="intro" aria-controls="view-intro">Introduction</button>
       <button type="button" role="tab" class="view-tab" id="nav-starters" data-action="set-view" data-id="starters" aria-controls="view-starters">Starter forces</button>
       <button type="button" role="tab" class="view-tab" id="nav-reference" data-action="set-view" data-id="reference" aria-controls="view-reference">Quick reference</button>
       <button type="button" role="tab" class="view-tab" id="nav-rules" data-action="set-view" data-id="rules" aria-controls="view-rules">Rules index</button>
@@ -163,6 +164,14 @@
   </aside>
 </main>
 
+<main class="view ref-view" id="view-intro" hidden>
+  <div class="ref-head">
+    <h1 class="ref-title">Introduction</h1>
+    <p class="ref-sub" id="intro-lead"></p>
+  </div>
+  <div id="intro-body"></div>
+</main>
+
 <main class="view ref-view" id="view-starters" hidden>
   <div class="ref-head">
     <h1 class="ref-title">Starter forces</h1>
@@ -220,10 +229,11 @@
   <button type="button" class="toast-btn" id="toast-undo" data-action="undo" hidden>Undo</button>
 </div>
 
-<script src="data/data.js?v=125b3ac8"></script>
+<script src="data/data.js?v=a443e37a"></script>
 <script src="data/reference.js?v=c0fd1383"></script>
+<script src="data/intro.js?v=7980e16a"></script>
 <script src="data/starters.js?v=9106a682"></script>
 <script src="data/rules-index.js?v=09267ebf"></script>
-<script src="js/app.js?v=51e92cb6"></script>
+<script src="js/app.js?v=e1893ee8"></script>
 </body>
 </html>

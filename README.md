@@ -7,7 +7,7 @@ A force builder for **Black Powder Red Earth**. It runs in any browser, needs no
 3. Build each deployment. The app tracks CP per pool, the one-per-100-CP limits, the Muhtasib-to-Shurta ratio, QRF discounts, and upgrades such as respirators and Forward Deployed.
 4. Choose a hand of three unique Intervention cards from any set. Unit Fires cards (Scoria RS, FengHuang-918, Quadrotor) are added automatically; in Phase Line you place one Phase Line Fires card at each line. Faction-emblem cards only appear for forces that include that faction.
 
-New to the game? **Starter forces** has ready-made forces for each faction in all three game types: Core Set (150 CP), Phase Line (200 CP plus two 150 CP waves, with Phase Line Fires cards chosen) and Spearhead (350 CP). Open one in the builder and change anything you like.
+New to the game? **Introduction** explains what the game is, what the war is about and how a game plays out, in about five minutes. First-time visitors land on it. **Starter forces** has ready-made forces for each faction in all three game types: Core Set (150 CP), Phase Line (200 CP plus two 150 CP waves, with Phase Line Fires cards chosen) and Spearhead (350 CP). Open one in the builder and change anything you like.
 
 **Rules index** is a searchable keyword list. Each keyword points to the book and printed page number, so you can find the rule and read it in the rulebook.
 
@@ -49,6 +49,7 @@ To run it offline, download `dist/bpre-force-builder.html` and open it. It is th
 | `js/app.js` | App logic. Plain JavaScript, no build step |
 | `data/data.js` | **All game data**: game types, points presets, factions, units, cards |
 | `data/reference.js` | Quick reference rules and Faction reference text |
+| `data/intro.js` | Introduction page for new players |
 | `data/starters.js` | Starter forces for new players |
 | `data/rules-index.js` | Rules index: keywords, books and page numbers |
 | `assets/factions/` | Faction emblems |
