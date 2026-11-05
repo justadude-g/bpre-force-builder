@@ -654,9 +654,21 @@
     }).join('');
   }
 
+  function renderSwitch() {
+    var a = $('#switch-game');
+    var o = D.otherGame;
+    if (!a || !o || !o.url) return;
+    a.href = o.url;
+    a.title = 'Open the ' + o.name + ' force builder';
+    a.innerHTML = '<span class="sw-long">Switch to </span>' + esc(o.name);
+    a.hidden = false;
+    // Inside an embedded frame, open the other tool in the full window.
+    if (EMBEDDED) a.target = '_top';
+  }
+
   function renderFooter() {
     var links = [];
-    if (D.repoUrl) links.push('<a href="' + esc(D.repoUrl) + '" target="_blank" rel="noopener">Source and issues on GitHub</a>');
+    links.push('<a href="mailto:games@staroversky.com">Contact: games@staroversky.com</a>');
     links.push('Data version ' + esc(D.version || ''));
     $('#footer-links').innerHTML = links.join(' · ');
   }
@@ -672,7 +684,7 @@
   }
 
   // ---------- views ----------
-  var VIEWS = ['build', 'intro', 'starters', 'reference', 'rules', 'factions'];
+  var VIEWS = ['build', 'intro', 'starters', 'reference', 'rules', 'factions', 'about'];
   function setView(v, keepScroll) {
     if (VIEWS.indexOf(v) === -1) v = 'build';
     ui.view = v;
@@ -1391,6 +1403,7 @@
     var h = (location.hash || '').replace('#', '');
     if (VIEWS.indexOf(h) !== -1 && h !== ui.view) setView(h);
   });
+  renderSwitch();
   renderFooter();
   renderSaved();
   render();

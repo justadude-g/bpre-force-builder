@@ -728,3 +728,23 @@ mark { background: var(--accent-soft); color: var(--ink); border-radius: 2px; pa
   .intro-steps > li { grid-template-columns: 28px minmax(0, 1fr); gap: 10px; }
   .intro-card dl > div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
 }
+
+/* ---------- About page ---------- */
+.about-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+.about-link { display: grid; gap: 2px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface-2); color: var(--ink); text-decoration: none; }
+.about-link b { font-family: var(--font-head); font-size: 18px; text-transform: uppercase; letter-spacing: .05em; color: var(--accent); }
+.about-link span { font-size: 13.5px; color: var(--muted); overflow-wrap: anywhere; }
+.about-link:hover { border-color: var(--accent); }
+@media print { #view-about { display: none !important; } }
+
+/* ---------- Switch game link ---------- */
+a.btn { text-decoration: none; color: inherit; }
+.switch-game { border-color: var(--accent); color: var(--accent); }
+.switch-game:hover { background: var(--accent-soft); border-color: var(--accent); }
+@media (max-width: 640px) { .switch-game .sw-long { display: none; } }
+@media (max-width: 640px) {
+  .top-actions { gap: 6px; }
+  .top-actions .btn { min-width: 0; padding-inline: 8px; font-size: 14px; }
+  .top-actions .switch-game { flex: 0 0 auto; }
+}
+.intro-p a, .footer a { color: var(--accent); }

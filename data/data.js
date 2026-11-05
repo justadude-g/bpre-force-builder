@@ -17,6 +17,8 @@ window.BPRE_DATA = {
   pointsLabel: "CP",
   // Set this to your GitHub repo URL so the app can link to issues.
   repoUrl: "https://github.com/justadude-g/bpre-force-builder",
+  // Link in the top bar so players can switch to the sister tool. Change the url if the site moves.
+  otherGame: { name: "NearPresent", url: "https://nearpresent.skirmishgames.app/" },
 
   sets: [
     { id: "core", name: "Core Set", short: "Core" },

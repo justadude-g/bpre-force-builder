@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Saira+Stencil+One&display=swap">
-<link rel="stylesheet" href="css/style.css?v=f606eaa0">
+<link rel="stylesheet" href="css/style.css?v=a243b02d">
 <script>
   // Match the device by default. Apply the saved choice before first paint so the page doesn't flash.
   (function () {
@@ -39,6 +39,7 @@
       <button type="button" class="btn" data-action="new-roster">New</button>
       <button type="button" class="btn" data-action="save-roster">Save</button>
       <button type="button" class="btn" data-action="toggle-saved" aria-expanded="false" aria-controls="saved-panel">Saved <span id="saved-count" class="count"></span></button>
+      <a class="btn switch-game" id="switch-game" href="#" rel="noopener" hidden></a>
       <button type="button" class="btn theme-btn" data-action="cycle-theme" id="theme-btn" aria-label="Theme: match device" title="Theme: match device"></button>
     </div>
   </div>
@@ -50,6 +51,7 @@
       <button type="button" role="tab" class="view-tab" id="nav-reference" data-action="set-view" data-id="reference" aria-controls="view-reference">Quick reference</button>
       <button type="button" role="tab" class="view-tab" id="nav-rules" data-action="set-view" data-id="rules" aria-controls="view-rules">Rules index</button>
       <button type="button" role="tab" class="view-tab" id="nav-factions" data-action="set-view" data-id="factions" aria-controls="view-factions">Factions</button>
+      <button type="button" role="tab" class="view-tab" id="nav-about" data-action="set-view" data-id="about" aria-controls="view-about">About</button>
     </div>
   </nav>
   <div id="saved-panel" class="saved-panel" hidden>
@@ -214,6 +216,35 @@
   <div id="faction-body"></div>
 </main>
 
+<main class="view ref-view" id="view-about" hidden>
+  <div class="ref-head">
+    <h1 class="ref-title">About this tool</h1>
+    <p class="ref-sub">A free community force builder for Black Powder Red Earth (BPRE), made with permission from Echelon Software.</p>
+  </div>
+  <div class="intro-stack">
+    <section class="ref-card intro-card" id="about-tool">
+      <header><h2>What it does</h2></header>
+      <p class="intro-p">BPRE Force Builder helps you put together a legal kill team in a few minutes. Pick a game type and faction, spend your CP, choose your Intervention cards, then save, share or print the force sheet. It runs in the browser, needs no account and keeps your forces on your own device.</p>
+      <dl><div><dt>Build</dt><dd>Pick a game type, faction and optional ally, then fill each deployment. The force sheet tracks CP, unit limits and ratios, and flags anything illegal.</dd></div><div><dt>Introduction</dt><dd>A five-minute orientation for new players.</dd></div><div><dt>Starter forces</dt><dd>Ready-made forces for every faction in each game type. Open one and change it.</dd></div><div><dt>Quick reference</dt><dd>The turn sequence and core rules in plain English. Searchable.</dd></div><div><dt>Rules index</dt><dd>A keyword search that points to the book and printed page.</dd></div><div><dt>Factions</dt><dd>The war, both blocs and every unit.</dd></div></dl>
+      <p class="intro-p">The tool summarizes rules and points. It does not replace the rulebooks. If something here disagrees with the printed book, the book wins.</p>
+    </section>
+    <section class="ref-card intro-card" id="about-game">
+      <header><h2>Get the game</h2><span class="ref-kicker">Buy it from the source</span></header>
+      <p class="intro-p">Black Powder Red Earth is made by Echelon Software. Rulebooks and models are listed on the official 28mm page. You can also find the game through its Patreon page.</p>
+      <div class="about-links">
+        <a class="about-link" href="https://www.blackpowderredearth.com/28mm.php" target="_blank" rel="noopener"><b>Official site</b><span>blackpowderredearth.com/28mm.php</span></a>
+        <a class="about-link" href="https://www.patreon.com/c/blackpowderredearth/posts" target="_blank" rel="noopener"><b>Patreon</b><span>patreon.com/blackpowderredearth</span></a>
+      </div>
+      <p class="intro-p">The game can also be bought on Amazon.</p>
+    </section>
+    <section class="ref-card intro-card" id="about-fine-print">
+      <header><h2>Corrections and credits</h2></header>
+      <p class="intro-p">Black Powder Red Earth and all related names belong to Echelon Software. This tool was made with their permission and only stores short summaries and numbers. If you spot a wrong cost or rule, email <a href="mailto:games@staroversky.com">games@staroversky.com</a> with a book and page reference.</p>
+    </section>
+  </div>
+</main>
+
+
 <button type="button" class="mobile-bar no-print" data-action="jump-summary" id="mobile-bar">
   <span class="mono"><span id="mb-used">0</span> / <span id="mb-limit">0</span> CP</span>
   <span id="mb-status"></span>
@@ -229,11 +260,11 @@
   <button type="button" class="toast-btn" id="toast-undo" data-action="undo" hidden>Undo</button>
 </div>
 
-<script src="data/data.js?v=a443e37a"></script>
+<script src="data/data.js?v=794348b8"></script>
 <script src="data/reference.js?v=c0fd1383"></script>
 <script src="data/intro.js?v=7980e16a"></script>
 <script src="data/starters.js?v=9106a682"></script>
 <script src="data/rules-index.js?v=09267ebf"></script>
-<script src="js/app.js?v=e1893ee8"></script>
+<script src="js/app.js?v=a2ee5510"></script>
 </body>
 </html>
